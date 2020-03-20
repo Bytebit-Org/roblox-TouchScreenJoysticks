@@ -5,7 +5,8 @@ This project is an open-source tool for composing multiple, customized touch scr
 - [API Documentation](package/DOCUMENTATION.md)
 
 # Example
-![Screenshot_20200320-164323_Roblox](https://user-images.githubusercontent.com/17803348/77207577-208bdc00-6ad0-11ea-9864-175fe452ccc9.jpg)
+![tscreenshot_20200320-164323_roblox](https://user-images.githubusercontent.com/17803348/77207941-0dc5d700-6ad1-11ea-886b-adaef10fa48c.jpg)
+<sup>*[Click here to watch a video demonstration.](https://streamable.com/s8vph)*</sup>
 
 It only takes one line of code to create a joystick! Below is an example of just a handful of lines of code that can be used to quickly generate two joysticks, one on each side of the screen, and print their inputs:
 
