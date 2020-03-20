@@ -55,7 +55,7 @@ Destroys the instance, making it incapable of rendering later and cleaning up al
 `hide(): void`\
 Hides any rendered instances
 
-`render(absoluteCenter: Vector2, radiusInPixels: number, zIndex: number): void`\
+`render(absoluteCenter: Vector2, radiusInPixels: number, zIndex: number, parent: Instance): void`\
 Renders on the screen
 ##### Parameters
 - absoluteCenter\
@@ -63,7 +63,10 @@ A `Vector2` describing the absolute center of the renderer in the viewport
 - radiusInPixels\
 A `number` describing the radius in pixels to render from the given center
 - zIndex\
-A `number` describing the z-index of the element and will typically match the priority level of the parent [`Joystick`](#Joystick) instance
+A `number` describing the z-index of the element\ Typically this will match the priority level of the parent [`Joystick`](#Joystick) instance
+- parent\
+An `Instance` to assign as the parent for all gui `Instance` object(s) created during rendering\
+Typically this will be the `ScreenGui` generated for the [`Joystick`](#Joystick) instance
 
 ### FilledCircleRenderer
 An implementation of [`IRenderer`](#IRenderer) that renders a solid color, filled circle
