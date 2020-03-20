@@ -1,5 +1,6 @@
 import { IViewportRegion } from "../../Interfaces/IViewportRegion";
 
+/** An implementation of `IViewportRegion` that describes a circular region of the viewport */
 export class CircleViewportRegion implements IViewportRegion {
     private readonly centerPoint: Vector2;
     private readonly radiusInPixels: number;

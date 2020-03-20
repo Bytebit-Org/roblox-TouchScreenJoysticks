@@ -1,5 +1,6 @@
 import { IViewportRegion } from "../../Interfaces/IViewportRegion";
 
+/** An implementation of `IViewportRegion` that describes a rectangular region of the viewport */
 export class RectangleViewportRegion implements IViewportRegion {
     private readonly topLeft: Vector2;
     private readonly bottomRight: Vector2;
