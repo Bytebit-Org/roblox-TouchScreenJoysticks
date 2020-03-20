@@ -1,24 +1,23 @@
 import { ICompositeJoystickRendererComponent } from "../../../../Interfaces/ICompositeJoystickRendererComponent";
 
-const IMAGE_ASSET = "rbxassetid://4798571099";
-
-/** An implementation of `IJoystickRenderer` that renders a solid color, filled circle */
-export class SolidFilledCircle implements ICompositeJoystickRendererComponent {
+/** An implementation of `IJoystickRenderer` that renders a given image */
+export class Image implements ICompositeJoystickRendererComponent {
     private readonly imageLabel: ImageLabel;
     
     private isDestroyed = false;
 
     /**
      * Creates a new instance
-     * @param color A `Color3` that describes the color of the filled circle
-     * @param transparency An optional `number` in the range [0, 1] that describes the transparency of the filled circle. Defaults to 0.
+     * @param image A `string` that describes the image asset
+     * @param imageColor An optional `Color3` that describes the image color of the GUI component. Defaults to white.
+     * @param imageTransparency An optional `number` in the range [0, 1] that describes the transparency of the GUI component. Defaults to 0.
      */
-    public constructor(color: Color3, transparency?: number) {
+    public constructor(image: string, imageColor?: Color3, transparency?: number) {
         const imageLabel = new Instance("ImageLabel");
         imageLabel.AnchorPoint = new Vector2(0.5, 0.5);
         imageLabel.BackgroundTransparency = 1;
-        imageLabel.Image = IMAGE_ASSET;
-        imageLabel.ImageColor3 = color;
+        imageLabel.Image = image;
+        imageLabel.ImageColor3 = imageColor !== undefined ? imageColor : new Color3(1, 1, 1);
         imageLabel.ImageTransparency = transparency !== undefined ? transparency : 0;
 
         this.imageLabel = imageLabel;

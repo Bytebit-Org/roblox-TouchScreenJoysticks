@@ -72,7 +72,16 @@ An `Instance` to assign as the parent for all gui `Instance` object(s) created d
 Typically this will be the `ScreenGui` generated for the [`IJoystick`](#IJoystick) instance
 
 ### CompositeJoystickRenderer
+A packaged renderer that combines two components - one for the gutter, one for the thumb - to render a joystick.
 
+#### Constructor
+`new CompositeJoystickRenderer(gutterComponent: ICompositeJoystickRendererComponent, thumbComponent: ICompositeJoystickRendererComponent)`\
+Creates a new instance
+##### Parameters
+- gutterComponent\
+The gutter rendering component
+- thumbComponent\
+The thumb rendering component
 
 ### ICompositeJoystickRendererComponent
 Defines a component for the CompositeJoystickRenderer\
@@ -100,6 +109,20 @@ The size to set on the rendered GUI instance
 The Z-index to set on the rendered GUI instance
 - parent\
 The parent for the rendered GUI instance
+
+### Image
+An implementation of [`ICompositeJoystickRendererComponent`](#ICompositeJoystickRendererComponent) that renders a provided image
+
+#### Constructor
+`new Image(image: string, imageColor?: Color3, imageTransparency?: number)`
+##### Parameters
+- image\
+A `string` that describes the image asset
+- color\
+An optional `Color3` that describes the image color of the GUI component. Defaults to white.
+- transparency\
+An optional `number` in the range [0, 1] that describes the transparency of the GUI component\
+Defaults to 0
 
 ### SolidFilledCircle
 An implementation of [`ICompositeJoystickRendererComponent`](#ICompositeJoystickRendererComponent) that renders a solid color, filled circle

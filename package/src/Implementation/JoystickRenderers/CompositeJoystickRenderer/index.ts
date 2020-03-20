@@ -1,12 +1,18 @@
 import { IJoystickRenderer } from "../../../Interfaces/IJoystickRenderer";
 import { ICompositeJoystickRendererComponent } from "../../../Interfaces/ICompositeJoystickRendererComponent";
 
+/** A packaged renderer that combines two components - one for the gutter, one for the thumb - to render a joystick. */
 export class CompositeJoystickRenderer implements IJoystickRenderer {
     private readonly gutterComponent: ICompositeJoystickRendererComponent;
     private readonly thumbComponent: ICompositeJoystickRendererComponent;
 
     private isDestroyed = false;
 
+    /**
+     * Creates a new instance
+     * @param gutterComponent The gutter rendering component
+     * @param thumbComponent The thumb rendering component
+     */
     public constructor(gutterComponent: ICompositeJoystickRendererComponent, thumbComponent: ICompositeJoystickRendererComponent) {
         this.gutterComponent = gutterComponent;
         this.thumbComponent = thumbComponent;
