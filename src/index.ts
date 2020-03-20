@@ -1,4 +1,5 @@
 // Interfaces
+export { IJoystickConfiguration } from "./Interfaces/IJoystickConfiguration";
 export { IRenderer } from "./Interfaces/IRenderer";
 export { IViewportRegion } from "./Interfaces/IViewportRegion";
 

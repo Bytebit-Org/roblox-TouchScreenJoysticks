@@ -86,7 +86,7 @@ Defaults to 0
 The interface for constructing a new [`Joystick`](#Joystick)
 
 #### Fields
-- activationRegion: [`IViewportRegion`](#IViewportRegion)
+- activationRegion: [`IViewportRegion`](#IViewportRegion)\
 Defines the screen region in which the [`Joystick`](#Joystick) instance can be activated by the player's input
 - renderableRegion?: [`IViewportRegion`](#IViewportRegion)\
 Defines the screen region in which the [`Joystick`](#Joystick) instance can be rendered\
