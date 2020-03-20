@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npm link ../package; rbxtsc; rojo build -o build.rbxlx; open build.rbxlx"
+    "start": "rbxtsc; rojo build -o build.rbxlx; open build.rbxlx"
   },
   "keywords": [],
   "author": "",

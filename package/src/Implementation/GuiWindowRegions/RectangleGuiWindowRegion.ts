@@ -1,7 +1,7 @@
-import { IViewportRegion } from "../../Interfaces/IViewportRegion";
+import { IGuiWindowRegion } from "../../Interfaces/IGuiWindowRegion";
 
-/** An implementation of `IViewportRegion` that describes a rectangular region of the viewport */
-export class RectangleViewportRegion implements IViewportRegion {
+/** An implementation of `IGuiWindowRegion` that describes a rectangular region of the viewport */
+export class RectangleGuiWindowRegion implements IGuiWindowRegion {
     private readonly topLeft: Vector2;
     private readonly bottomRight: Vector2;
 

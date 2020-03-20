@@ -1,7 +1,7 @@
 import { IDestroyable } from "@rbxts/dumpster";
 import { IReadOnlySignal } from "@rbxts/signals-tooling";
-import { IViewportRegion } from "./IViewportRegion";
-import { IRenderer } from "./IRenderer";
+import { IGuiWindowRegion } from "./IGuiWindowRegion";
+import { IJoystickRenderer } from "./IJoystickRenderer";
 
 /** Defines a joystick */
 export interface IJoystick extends IDestroyable {
@@ -74,9 +74,9 @@ export interface IJoystick extends IDestroyable {
 
     /**
      * Sets the activation region of the instance
-     * @param newRegion An `IViewportRegion` to use as the new activation region for the instance
+     * @param newRegion An `IGuiWindowRegion` to use as the new activation region for the instance
      */
-    setActivationRegion(newRegion: IViewportRegion): void;
+    setActivationRegion(newRegion: IGuiWindowRegion): void;
 
     /**
      * Sets the enabled state of the instance to the given new value.
@@ -92,12 +92,6 @@ export interface IJoystick extends IDestroyable {
     setGutterRadiusInPixels(newRadiusInPixels: number): void;
 
     /**
-     * Sets the gutter renderer for the instance and destroys the previous renderer
-     * @param newRenderer An `IRenderer` to use as the new gutter renderer for the instance
-     */
-    setGutterRenderer(newRenderer: IRenderer): void;
-
-    /**
      * Sets the inactive center point for the instance
      * @param newPoint A `Vector2` to use as the new inactive center point for the instance
      */
@@ -110,16 +104,16 @@ export interface IJoystick extends IDestroyable {
     setPriorityLevel(newPriorityLevel: number): void;
 
     /**
-     * Sets the thumb radius in pixels for the instance
-     * @param newRadiusInPixels A `number` to use as the new radius in pixels for the thumb of the instance
+     * Sets the renderer for the instance and destroys the previous renderer
+     * @param newRenderer An `IJoystickRenderer` to use as the new renderer for the instance
      */
-    setThumbRadiusInPixels(newRadiusInPixels: number): void;
+    setRenderer(newRenderer: IJoystickRenderer): void;
 
     /**
-     * Sets the thumb renderer for the instance and destroys the previous renderer
-     * @param newRenderer An `IRenderer` to use as the new thumb renderer for the instance
+     * Sets the relative thumb radius for the instance
+     * @param newRelativeThumbRadius A `number` in the range [0, 1] to use as the new relative thumb radius of the instance
      */
-    setThumbRenderer(newRenderer: IRenderer): void;
+    setRelativeThumbRadius(newRelativeThumbRadius: number): void;
 
     /**
      * Sets the visible state of the instance to the given new value.

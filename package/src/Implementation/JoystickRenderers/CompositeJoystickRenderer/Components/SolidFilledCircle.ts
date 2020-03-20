@@ -1,9 +1,9 @@
-import { IRenderer } from "../../Interfaces/IRenderer";
+import { ICompositeJoystickRendererComponent } from "../../../../Interfaces/ICompositeJoystickRendererComponent";
 
 const IMAGE_ASSET = "rbxassetid://4798571099";
 
-/** An implementation of `IRenderer` that renders a solid color, filled circle */
-export class FilledCircleRenderer implements IRenderer {
+/** An implementation of `IJoystickRenderer` that renders a solid color, filled circle */
+export class SolidFilledCircle implements ICompositeJoystickRendererComponent {
     private readonly imageLabel: ImageLabel;
     
     private isDestroyed = false;
@@ -29,6 +29,10 @@ export class FilledCircleRenderer implements IRenderer {
         this.isDestroyed = true;
     }
 
+    public getParentableInstance() {
+        return this.imageLabel;
+    }
+
     public hide() {
         if (this.isDestroyed) {
             throw `Instance is destroyed`;
@@ -37,15 +41,16 @@ export class FilledCircleRenderer implements IRenderer {
         this.imageLabel.Parent = undefined;
     }
 
-    public render(absoluteCenter: Vector2, radiusInPixels: number, zIndex: number, parent: Instance) {
+    public render(anchorPoint: Vector2, position: UDim2, size: UDim2, zIndex: number, parent: Instance) {
         if (this.isDestroyed) {
             throw `Instance is destroyed`;
         }
          
         this.imageLabel.Parent = undefined;
 
-        this.imageLabel.Position = new UDim2(0, absoluteCenter.X, 0, absoluteCenter.Y);
-        this.imageLabel.Size = new UDim2(0, 2 * radiusInPixels, 0, 2 * radiusInPixels);
+        this.imageLabel.AnchorPoint = anchorPoint;
+        this.imageLabel.Position = position;
+        this.imageLabel.Size = size;
         this.imageLabel.ZIndex = zIndex;
 
         this.imageLabel.Parent = parent;

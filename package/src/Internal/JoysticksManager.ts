@@ -5,10 +5,8 @@ export class JoysticksManagerSingleton {
     // A sorted array of the registered joysticks in ascending order of priority
     private joysticks: ReadonlyArray<Joystick>;
 
-    private readonly inactiveGuttersScreenGui: ScreenGui;
-    private readonly inactiveThumbsScreenGui: ScreenGui;
-    private readonly activeGuttersScreenGui: ScreenGui;
-    private readonly activeThumbsScreenGui: ScreenGui;
+    private readonly activeJoysticksScreenGui: ScreenGui;
+    private readonly inactiveJoysticksScreenGui: ScreenGui;
 
     private readonly activeJoysticksByTouchInputObject: Map<InputObject, Joystick>;
     private readonly touchInputObjectsByActiveJoystick: Map<Joystick, InputObject>;
@@ -16,10 +14,8 @@ export class JoysticksManagerSingleton {
     public constructor() {
         this.joysticks = new Array<Joystick>();
 
-        this.inactiveGuttersScreenGui = this.createScreenGui(1, "Joysticks_InactiveGutters");
-        this.inactiveThumbsScreenGui = this.createScreenGui(2, "Joysticks_InactiveThumbs");
-        this.activeGuttersScreenGui = this.createScreenGui(3, "Joysticks_ActiveGutters");
-        this.activeThumbsScreenGui = this.createScreenGui(4, "Joysticks_ActiveThumbs");
+        this.activeJoysticksScreenGui = this.createScreenGui(2, "Joysticks_ActiveJoysticks");
+        this.inactiveJoysticksScreenGui = this.createScreenGui(1, "Joysticks_InactiveJoysticks");
 
         this.activeJoysticksByTouchInputObject = new Map<InputObject, Joystick>();
         this.touchInputObjectsByActiveJoystick = new Map<Joystick, InputObject>();
@@ -141,9 +137,9 @@ export class JoysticksManagerSingleton {
 
     private renderJoystick(joystick: Joystick) {
         if (joystick.isActive) {
-            joystick.render(this.activeGuttersScreenGui, this.activeThumbsScreenGui);
+            joystick.render(this.activeJoysticksScreenGui);
         } else {
-            joystick.render(this.inactiveGuttersScreenGui, this.inactiveThumbsScreenGui);
+            joystick.render(this.inactiveJoysticksScreenGui);
         }
     }
 }

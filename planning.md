@@ -17,7 +17,7 @@ using a singleton joystickmanager, listen for user input events and keep track o
 have each individual joystick communicate with the singleton joystickmanager (opaque from consumer)\
 each joystick should have:
 - activation region
-- renderable region (which can default to the entire viewport)
+- renderable region (which can default to the entire GUI window)
 - gutter renderer
   - should provide a default `filledCircleGutterRenderer` class
 - thumb renderer

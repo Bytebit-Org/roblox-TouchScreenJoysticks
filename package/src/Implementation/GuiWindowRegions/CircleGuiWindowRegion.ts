@@ -1,7 +1,7 @@
-import { IViewportRegion } from "../../Interfaces/IViewportRegion";
+import { IGuiWindowRegion } from "../../Interfaces/IGuiWindowRegion";
 
-/** An implementation of `IViewportRegion` that describes a circular region of the viewport */
-export class CircleViewportRegion implements IViewportRegion {
+/** An implementation of `IGuiWindowRegion` that describes a circular region of the viewport */
+export class CircleGuiWindowRegion implements IGuiWindowRegion {
     private readonly centerPoint: Vector2;
     private readonly radiusInPixels: number;
 

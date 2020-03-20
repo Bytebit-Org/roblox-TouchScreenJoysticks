@@ -1,8 +1,8 @@
 import { IJoystickConfiguration } from "../Interfaces/IJoystickConfiguration";
 import { IJoystick } from "../Interfaces/IJoystick";
 import { ISignal, Signal } from "@rbxts/signals-tooling";
-import { IViewportRegion } from "../Interfaces/IViewportRegion";
-import { IRenderer } from "../Interfaces/IRenderer";
+import { IGuiWindowRegion } from "../Interfaces/IGuiWindowRegion";
+import { IJoystickRenderer } from "../Interfaces/IJoystickRenderer";
 import { Dumpster } from "@rbxts/dumpster";
 import { JoysticksManager } from "../Internal/JoysticksManager";
 import { Workspace, GuiService } from "@rbxts/services";
@@ -24,17 +24,16 @@ export class Joystick implements IJoystick {
     public visibilityChanged: ISignal<(newValue: boolean) => void>;
 
     // Internal instance members
-    public activationRegion: IViewportRegion;
+    public activationRegion: IGuiWindowRegion;
 
     // Private instance members
     private gutterCenterPoint: Vector2;
     private gutterRadiusInPixels: number;
-    private gutterRenderer: IRenderer;
     private inactiveCenterPoint: Vector2;
     private isDestroyed = false;
+    private relativeThumbRadius: number;
+    private renderer: IJoystickRenderer;
     private signalsDumpster: Dumpster;
-    private thumbRadiusInPixels: number;
-    private thumbRenderer: IRenderer;
 
     private constructor(configuration: IJoystickConfiguration) {
         // Initialize public instance members
@@ -54,10 +53,9 @@ export class Joystick implements IJoystick {
         // Initialize private instance members from configuration
         this.activationRegion = configuration.activationRegion;
         this.gutterRadiusInPixels = configuration.gutterRadiusInPixels;
-        this.gutterRenderer = configuration.gutterRenderer;
         this.inactiveCenterPoint = configuration.inactiveCenterPoint;
-        this.thumbRadiusInPixels = configuration.thumbRadiusInPixels;
-        this.thumbRenderer = configuration.thumbRenderer;
+        this.relativeThumbRadius = configuration.relativeThumbRadius;
+        this.renderer = configuration.renderer;
 
         // Initialize other private members
         this.gutterCenterPoint = configuration.inactiveCenterPoint;
@@ -94,13 +92,12 @@ export class Joystick implements IJoystick {
         this.isDestroyed = true;
 
         this.signalsDumpster.burn();
-        this.gutterRenderer.destroy();
-        this.thumbRenderer.destroy();
+        this.renderer.destroy();
 
         JoysticksManager.deregisterJoystick(this);
     }
 
-    public setActivationRegion(newRegion: IViewportRegion) {
+    public setActivationRegion(newRegion: IGuiWindowRegion) {
         if (this.isDestroyed) {
             throw `Instance is destroyed`;
         }
@@ -134,17 +131,6 @@ export class Joystick implements IJoystick {
         JoysticksManager.requestRender(this);
     }
 
-    public setGutterRenderer(newRenderer: IRenderer) {
-        if (this.isDestroyed) {
-            throw `Instance is destroyed`;
-        }
-
-        this.gutterRenderer.destroy();
-        this.gutterRenderer = newRenderer;
-
-        JoysticksManager.requestRender(this);
-    }
-
     public setInactiveCenterPoint(newPoint: Vector2) {
         if (this.isDestroyed) {
             throw `Instance is destroyed`;
@@ -167,23 +153,22 @@ export class Joystick implements IJoystick {
         JoysticksManager.requestRender(this);
     }
 
-    public setThumbRadiusInPixels(newRadiusInPixels: number) {
+    public setRelativeThumbRadius(relativeThumbRadius: number) {
         if (this.isDestroyed) {
             throw `Instance is destroyed`;
         }
 
-        this.thumbRadiusInPixels = newRadiusInPixels;
+        this.relativeThumbRadius = relativeThumbRadius;
 
         JoysticksManager.requestRender(this);
     }
 
-    public setThumbRenderer(newRenderer: IRenderer) {
+    public setRenderer(newRenderer: IJoystickRenderer) {
         if (this.isDestroyed) {
             throw `Instance is destroyed`;
         }
 
-        this.thumbRenderer.destroy();
-        this.thumbRenderer = newRenderer;
+        this.renderer.destroy();
 
         JoysticksManager.requestRender(this);
     }
@@ -197,8 +182,7 @@ export class Joystick implements IJoystick {
             this.isVisible = newValue;
 
             if (newValue) {
-                this.gutterRenderer.hide();
-                this.thumbRenderer.hide();
+                this.renderer.hide();
             } else {
                 JoysticksManager.requestRender(this);
             }
@@ -213,20 +197,20 @@ export class Joystick implements IJoystick {
             throw `Instance is destroyed`;
         }
 
-        const viewportSize = this.getViewportSize();
+        const guiWindowSize = this.getGuiWindowSize();
 
         let newGutterCenter = inputPoint;
 
         if (inputPoint.X - this.gutterRadiusInPixels < 0) {
             newGutterCenter = new Vector2(this.gutterRadiusInPixels, newGutterCenter.Y);
-        } else if (inputPoint.X + this.gutterRadiusInPixels > viewportSize.X) {
-            newGutterCenter = new Vector2(viewportSize.X - this.gutterRadiusInPixels, newGutterCenter.Y);
+        } else if (inputPoint.X + this.gutterRadiusInPixels > guiWindowSize.X) {
+            newGutterCenter = new Vector2(guiWindowSize.X - this.gutterRadiusInPixels, newGutterCenter.Y);
         }
 
         if (inputPoint.Y - this.gutterRadiusInPixels < 0) {
             newGutterCenter = new Vector2(newGutterCenter.X, this.gutterRadiusInPixels);
-        } else if (inputPoint.Y + this.gutterRadiusInPixels > viewportSize.Y) {
-            newGutterCenter = new Vector2(newGutterCenter.X, viewportSize.Y - this.gutterRadiusInPixels);
+        } else if (inputPoint.Y + this.gutterRadiusInPixels > guiWindowSize.Y) {
+            newGutterCenter = new Vector2(newGutterCenter.X, guiWindowSize.Y - this.gutterRadiusInPixels);
         }
 
         this.gutterCenterPoint = newGutterCenter;
@@ -254,16 +238,13 @@ export class Joystick implements IJoystick {
         this.activated.fire(finalInput);
     }
 
-    public render(gutterScreenGui: ScreenGui, thumbScreenGui: ScreenGui): void {
+    public render(screenGui: ScreenGui): void {
         if (this.isDestroyed) {
             throw `Instance is destroyed`;
         }
 
-        const effectiveGutterRadius = this.calculateEffectiveGutterRadius();
-        const thumbCenterPoint = this.input !== undefined ? this.gutterCenterPoint.add(this.input.mul(effectiveGutterRadius)) : this.gutterCenterPoint;
-
-        this.gutterRenderer.render(this.gutterCenterPoint, this.gutterRadiusInPixels, this.priorityLevel, gutterScreenGui);
-        this.thumbRenderer.render(thumbCenterPoint, this.thumbRadiusInPixels, this.priorityLevel, thumbScreenGui);
+        const relativeThumbPosition = this.input !== undefined ? this.input.mul(1 - this.relativeThumbRadius) : new Vector2(0, 0);
+        this.renderer.render(this.gutterCenterPoint, relativeThumbPosition, this.gutterRadiusInPixels, this.relativeThumbRadius, this.priorityLevel, screenGui);
     }
 
     public updateInput(inputPoint: Vector2): void {
@@ -283,7 +264,7 @@ export class Joystick implements IJoystick {
 
     // Private instance methods
     private calculateEffectiveGutterRadius(): number {
-        return this.gutterRadiusInPixels - this.thumbRadiusInPixels;
+        return this.gutterRadiusInPixels * (1 - this.relativeThumbRadius);
     }
 
     private calculateInput(inputPoint: Vector2): Vector2 {
@@ -298,15 +279,15 @@ export class Joystick implements IJoystick {
         return newInput;
     }
 
-    private getViewportSize(): Vector2 {
+    private getGuiWindowSize(): Vector2 {
         if (Workspace.CurrentCamera === undefined) {
-            throw `Cannot get viewport size because CurrentCamera is undefined`;
+            throw `Cannot get guiWindow size because CurrentCamera is undefined`;
         }
         const [ guiInsetTopLeft, guiInsetBottomRight ] = GuiService.GetGuiInset();
-        const viewportTopLeft = guiInsetTopLeft;
-        const viewportBottomRight = Workspace.CurrentCamera.ViewportSize.sub(guiInsetBottomRight);
-        const viewportSize = viewportBottomRight.sub(viewportTopLeft);
+        const guiWindowTopLeft = guiInsetTopLeft;
+        const guiWindowBottomRight = Workspace.CurrentCamera.ViewportSize.sub(guiInsetBottomRight);
+        const guiWindowSize = guiWindowBottomRight.sub(guiWindowTopLeft);
 
-        return viewportSize;
+        return guiWindowSize;
     }
 }

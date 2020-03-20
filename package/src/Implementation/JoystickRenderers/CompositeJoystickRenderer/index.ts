@@ -1,0 +1,41 @@
+import { IJoystickRenderer } from "../../../Interfaces/IJoystickRenderer";
+import { ICompositeJoystickRendererComponent } from "../../../Interfaces/ICompositeJoystickRendererComponent";
+
+export class CompositeJoystickRenderer implements IJoystickRenderer {
+    private readonly gutterComponent: ICompositeJoystickRendererComponent;
+    private readonly thumbComponent: ICompositeJoystickRendererComponent;
+
+    private isDestroyed = false;
+
+    public constructor(gutterComponent: ICompositeJoystickRendererComponent, thumbComponent: ICompositeJoystickRendererComponent) {
+        this.gutterComponent = gutterComponent;
+        this.thumbComponent = thumbComponent;
+    }
+
+    public destroy() {
+        this.isDestroyed = true;
+
+        this.gutterComponent.destroy();
+        this.thumbComponent.destroy();
+    }
+
+    public hide() {
+        if (this.isDestroyed) {
+            throw `Instance is destroyed`;
+        }
+
+        this.gutterComponent.hide();
+        this.thumbComponent.hide();
+    }
+
+    public render(absoluteCenter: Vector2, relativeThumbPosition: Vector2, gutterRadiusInPixels: number, relativeThumbRadius: number, zIndex: number, parent: Instance) {
+        const gutterPosition = new UDim2(0, absoluteCenter.X, 0, absoluteCenter.Y);
+        const gutterSize = new UDim2(0, 2 * gutterRadiusInPixels, 0, 2 * gutterRadiusInPixels);
+
+        const thumbPosition = new UDim2(0.5 + (relativeThumbPosition.X / 2), 0, 0.5 + (relativeThumbPosition.Y / 2), 0);
+        const thumbSize = new UDim2(relativeThumbRadius, 0, relativeThumbRadius, 0);
+
+        this.gutterComponent.render(new Vector2(0.5, 0.5), gutterPosition, gutterSize, zIndex, parent);
+        this.thumbComponent.render(new Vector2(0.5, 0.5), thumbPosition, thumbSize, 1, this.gutterComponent.getParentableInstance());
+    }
+}

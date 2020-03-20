@@ -1,5 +1,5 @@
 /** An interface for defining viewport regions so as to check if a given point exists in the region */
-export interface IViewportRegion {
+export interface IGuiWindowRegion {
     /**
      * Determines whether the given point exists in the region
      * @param point The viewport point in question. Units should be in pixels.

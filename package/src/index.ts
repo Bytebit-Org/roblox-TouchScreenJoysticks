@@ -1,11 +1,13 @@
 // Interfaces
+export { ICompositeJoystickRendererComponent } from "./Interfaces/ICompositeJoystickRendererComponent";
 export { IJoystick } from "./Interfaces/IJoystick";
 export { IJoystickConfiguration } from "./Interfaces/IJoystickConfiguration";
-export { IRenderer } from "./Interfaces/IRenderer";
-export { IViewportRegion } from "./Interfaces/IViewportRegion";
+export { IJoystickRenderer } from "./Interfaces/IJoystickRenderer";
+export { IGuiWindowRegion } from "./Interfaces/IGuiWindowRegion";
 
 // Implementations
 export * from "./Implementation/Joystick";
-export * from "./Implementation/Renderers/FilledCircleRenderer";
-export * from "./Implementation/ViewportRegions/CircleViewportRegion";
-export * from "./Implementation/ViewportRegions/RectangleViewportRegion";
+export * from "./Implementation/JoystickRenderers/CompositeJoystickRenderer";
+export * from "./Implementation/JoystickRenderers/CompositeJoystickRenderer/Components/SolidFilledCircle";
+export * from "./Implementation/GuiWindowRegions/CircleGuiWindowRegion";
+export * from "./Implementation/GuiWindowRegions/RectangleGuiWindowRegion";
