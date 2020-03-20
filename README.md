@@ -55,13 +55,15 @@ Destroys the instance, making it incapable of rendering later and cleaning up al
 `hide(): void`\
 Hides any rendered instances
 
-`render(absoluteCenter: Vector2, radiusInPixels: number): void`\
+`render(absoluteCenter: Vector2, radiusInPixels: number, zIndex: number): void`\
 Renders on the screen
 ##### Parameters
 - absoluteCenter\
 A `Vector2` describing the absolute center of the renderer in the viewport
 - radiusInPixels\
 A `number` describing the radius in pixels to render from the given center
+- zIndex\
+A `number` describing the z-index of the element and will typically match the priority level of the parent [`Joystick`](#Joystick) instance
 
 ### FilledCircleRenderer
 An implementation of [`IRenderer`](#IRenderer) that renders a solid color, filled circle
@@ -72,7 +74,8 @@ An implementation of [`IRenderer`](#IRenderer) that renders a solid color, fille
 - color\
 A `Color3` that describes the color of the filled circle
 - transparency\
-A `number` in the range [0, 1] that describes the transparency of the filled circle
+An optional `number` in the range [0, 1] that describes the transparency of the filled circle\
+Defaults to 0
 
 ## Joystick API
 
