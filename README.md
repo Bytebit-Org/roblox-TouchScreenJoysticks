@@ -63,10 +63,10 @@ A `Vector2` describing the absolute center of the renderer in the viewport
 - radiusInPixels\
 A `number` describing the radius in pixels to render from the given center
 - zIndex\
-A `number` describing the z-index of the element\ Typically this will match the priority level of the parent [`Joystick`](#Joystick) instance
+A `number` describing the z-index of the element\ Typically this will match the priority level of the parent [`JIoystick`](#JIoystick) instance
 - parent\
 An `Instance` to assign as the parent for all gui `Instance` object(s) created during rendering\
-Typically this will be the `ScreenGui` generated for the [`Joystick`](#Joystick) instance
+Typically this will be the `ScreenGui` generated for the [`JIoystick`](#JIoystick) instance
 
 ### FilledCircleRenderer
 An implementation of [`IRenderer`](#IRenderer) that renders a solid color, filled circle
@@ -83,37 +83,36 @@ Defaults to 0
 ## Joystick API
 
 ### IJoystickConfiguration
-The interface for constructing a new [`Joystick`](#Joystick)
+The interface for constructing a new [`IJoystick`](#IJoystick)
 
 #### Fields
 - activationRegion: [`IViewportRegion`](#IViewportRegion)\
-Defines the screen region in which the [`Joystick`](#Joystick) instance can be activated by the player's input
+Defines the screen region in which the [`IJoystick`](#IJoystick) instance can be activated by the player's input
 - renderableRegion?: [`IViewportRegion`](#IViewportRegion)\
-Defines the screen region in which the [`Joystick`](#Joystick) instance can be rendered\
+Defines the screen region in which the [`IJoystick`](#IJoystick) instance can be rendered\
 Defaults to the entire viewport
+- gutterRadiusInPixels: `number`\
+Defines the gutter radius in pixels
 - gutterRenderer: [`IRenderer`](#IRenderer)\
-Defines the renderer instance for the gutter of the [`Joystick`](#Joystick) instance
+Defines the renderer instance for the gutter of the [`JIoystick`](#JIoystick) instance
+- thumbRadiusInPixels: `number`\
+Defines the thumb radius in pixels
 - thumbRenderer: [`IRenderer`](#IRenderer)\
-Defines the renderer instance for the thumb of the [`Joystick`](#Joystick) instance
+Defines the renderer instance for the thumb of the [`JIoystick`](#JIoystick) instance
 - inactiveCenterPoint: `Vector2`\
-Defines the inactive center point in the viewport of the [`Joystick`](#Joystick) instance
+Defines the inactive center point in the viewport of the [`JIoystick`](#JIoystick) instance
 - priorityLevel?: `number`\
-Defines the priority leve lof the [`Joystick`](#Joystick) instance\
+Defines the priority leve lof the [`IJoystick`](#IJoystick) instance\
 Defaults to 1
 - initializedEnabled?: `boolean`\
-Defines whether the [`Joystick`](#Joystick) instance should initialize as enabled\
+Defines whether the [`JIoystick`](#JIoystick) instance should initialize as enabled\
 Defaults to false
 - initializedVisible?: `boolean`\
-Defines whether the [`Joystick`](#Joystick) instance should initialize as visible\
+Defines whether the [`JIoystick`](#JIoystick) instance should initialize as visible\
 Defaults to false
 
-### Joystick
-
-#### Constructor
-`new Joystick(configuration: IJoystickConfiguration)`
-##### Parameters
-- configuration\
-An [`IJoystickConfiguration`](#IJoystickConfiguration) that defines the configuration parameters for the new [`Joystick`](#Joystick) instance
+### IJoystick
+Defines a joystick
 
 #### Instance members
 `readonly input?: Vector2`\
@@ -137,87 +136,112 @@ When visible, the joystick will be rendered
 A readonly field for determining the priority level for the instance
 
 #### Instance signals
-`readonly IReadOnlySignal<(initialInput: Vector2) => void> activated`\
+`readonly activated: IReadOnlySignal<(initialInput: Vector2) => void>`\
 Fired when the instance is activated
 ##### Arguments
 - initialInput\
 A `Vector2` describing the initial input from the player upon activation
 
-`readonly IReadOnlySignal<(finalInput: Vector2) => void> deactivated`\
+`readonly deactivated: IReadOnlySignal<(finalInput: Vector2) => void>`\
 Fired when the instance is deactivated
 ##### Arguments
 - finalInput\
 A `Vector2` describing the final input from the player just prior to deactivation
 
-`readonly IReadOnlySignal disabled`\
+`readonly disabled: IReadOnlySignal`\
 Fired when the instance is disabled
 
-`readonly IReadOnlySignal enabled`\
+`readonly enabled: IReadOnlySignal`\
 Fired when the instance is enabled
 
-`readonly IReadOnlySignal<(newInput: Vector2) => void> inputChanged`\
+`readonly inputChanged: IReadOnlySignal<(newInput: Vector2) => void>`\
 Fired when the instance's input has changed
 ##### Arguments
 - newInput\
 A `Vector2` describing the new input from the player
 
-`readonly IReadOnlySignal<(newValue: boolean) => void> visibilityChanged`\
+`readonly visibilityChanged: IReadOnlySignal<(newValue: boolean) => void>`\
 Fired when the instance's visibility has changed
 ##### Arguments
 - newValue\
 A `boolean` indicating whether the instance is now visible
 
 #### Instance methods
-`void destroy()`\
+`destroy(): void`\
 Destroys the instance, its renderers, any other associated instances, and disconnects all connections to its signals\
 An instance cannot be re-used after being destroyed
 
-`void setActivationRegion(newRegion: IViewportRegion)`\
-Sets the activation region of the instance\
+`setActivationRegion(newRegion: IViewportRegion): void`\
+Sets the activation region of the instance
 ##### Parameters
 - newRegion\
 An [`IViewportRegion`](#IViewportRegion) to use as the new activation region for the instance
 
-`void setEnabled(newValue: boolean)`\
-Sets the enabled state of the instance to the given newValue\
+`setEnabled(newValue: boolean): void`\
+Sets the enabled state of the instance to the given new value\
 If the new value does not match the current state, then the appropriate signal (either `enabled` or `disabled`) will fire
 ##### Parameters
 - newValue\
 A `boolean` indicating whether the instance should be enabled
 
-`void setGutterRenderer(newRenderer: IRenderer)`\
-Sets the gutter renderer for the instance
-#### Parameters
+`setGutterRadiusInPixels(newRadiusInPixels: number): void`\
+Sets the gutter radius in pixels for the instance
+##### Parameters
+- newRadiusInPixels\
+A `number` to use as the new radius in pixels for the gutter of the instance
+
+`setGutterRenderer(newRenderer: IRenderer): void`\
+Sets the gutter renderer for the instance and destroys the previous renderer
+##### Parameters
 - newRenderer\
 An [`IRenderer`](#IRenderer) to use as the new gutter renderer for the instance
 
-`void setInactiveCenterPoint(newPoint: Vector2)`\
+`setInactiveCenterPoint(newPoint: Vector2): void`\
 Sets the inactive center point for the instance
-#### Parameters
+##### Parameters
 - newPoint\
 A `Vector2` to use as the new inactive center point for the instance
 
-`void setPriorityLevel(newPriorityLevel: number)`\
+`setPriorityLevel(newPriorityLevel: number): void`\
 Sets the priority level for the instance
-#### Parameters
+##### Parameters
 - newPriorityLevel\
 A `number` to use as the new priority level for the instance
 
-`void setRenderableRegion(newRegion: IViewportRegion)`\
-Sets the renderable region of the instance\
+`setRenderableRegion(newRegion: IViewportRegion): void`\
+Sets the renderable region of the instance
 ##### Parameters
 - newRegion\
-An [`IViewportRegion`](#IViewportRegion) to use as the new renderable region for the instance
+An optional [`IViewportRegion`](#IViewportRegion) to use as the new renderable region for the instance\
+Defaults to the entire viewport
 
-`void setThumbRenderer(newRenderer: IRenderer)`\
-Sets the thumb renderer for the instance
-#### Parameters
+`setThumbRadiusInPixels(newRadiusInPixels: number): void`\
+Sets the thumb radius in pixels for the instance
+##### Parameters
+- newRadiusInPixels\
+A `number` to use as the new radius in pixels for the thumb of the instance
+
+`setThumbRenderer(newRenderer: IRenderer): void`\
+Sets the thumb renderer for the instance and destroys the previous renderer
+##### Parameters
 - newRenderer\
 An [`IRenderer`](#IRenderer) to use as the new thumb renderer for the instance
 
-`void setVisible(newValue: boolean)`\
-Sets the visible state of the instance to the given newValue\
+`setVisible(newValue: boolean): void`\
+Sets the visible state of the instance to the given new value\
 If the new value does not match the current state, then the `visibilityChanged` signal will fire
 ##### Parameters
 - newValue\
 A `boolean` indicating whether the instance should be visible
+
+### Joystick
+The actual implementation of [`IJoystick`](#IJoystick)
+
+#### Static methods
+`Joystick.create(configuration: IJoystickConfiguration): IJoystick`\
+Creates a new instance
+##### Parameters
+- configuration\
+An [`IJoystickConfiguration`](#IJoystickConfiguration) that defines the configuration parameters for the new [`IJoystick`](#IJoystick) instance
+##### Returns
+Returns the new instance

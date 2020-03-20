@@ -103,6 +103,9 @@ dist
 # TernJS port file
 .tern-port
 
+# macOS
+.DS_STORE
+
 # roblox-ts
 include/
 out/

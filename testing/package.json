@@ -4,12 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npm link ../package; rbxtsc; rojo build -o build.rbxlx; open build.rbxlx"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@rbxts/types": "^1.0.343"
+  },
+  "dependencies": {
+    "@rbxts/services": "^1.0.4"
   }
 }

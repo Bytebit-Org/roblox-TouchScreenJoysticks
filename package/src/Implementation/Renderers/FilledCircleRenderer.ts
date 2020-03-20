@@ -45,7 +45,7 @@ export class FilledCircleRenderer implements IRenderer {
         this.imageLabel.Parent = undefined;
 
         this.imageLabel.Position = new UDim2(0, absoluteCenter.X, 0, absoluteCenter.Y);
-        this.imageLabel.Size = new UDim2(0, radiusInPixels, 0, radiusInPixels);
+        this.imageLabel.Size = new UDim2(0, 2 * radiusInPixels, 0, 2 * radiusInPixels);
         this.imageLabel.ZIndex = zIndex;
 
         this.imageLabel.Parent = parent;

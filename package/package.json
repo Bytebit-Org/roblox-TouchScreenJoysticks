@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@rbxts/dumpster": "^1.0.8",
+    "@rbxts/services": "^1.0.4",
     "@rbxts/signals-tooling": "^1.0.2"
   }
 }
