@@ -25,6 +25,7 @@
     "@rbxts/types": "^1.0.343"
   },
   "dependencies": {
+    "@rbxts/dumpster": "^1.0.8",
     "@rbxts/signals-tooling": "^1.0.2"
   }
 }
