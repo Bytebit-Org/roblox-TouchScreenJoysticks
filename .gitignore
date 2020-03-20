@@ -107,5 +107,6 @@ dist
 .DS_STORE
 
 # roblox-ts
+.rbxlx
 include/
 out/
