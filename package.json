@@ -1,0 +1,27 @@
+{
+  "name": "@rbxts/touch-screen-joysticks",
+  "version": "0.0.1",
+  "description": "",
+  "main": "out/init.lua",
+  "scripts": {
+    "prepublishOnly": "rbxtsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bytebit-Org/roblox-TouchScreenJoysticks.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Bytebit-Org/roblox-TouchScreenJoysticks/issues"
+  },
+  "homepage": "https://github.com/Bytebit-Org/roblox-TouchScreenJoysticks#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "types": "out/index.d.ts",
+  "devDependencies": {
+    "@rbxts/types": "^1.0.343"
+  }
+}
