@@ -23,5 +23,8 @@
   "types": "out/index.d.ts",
   "devDependencies": {
     "@rbxts/types": "^1.0.343"
+  },
+  "dependencies": {
+    "@rbxts/signals-tooling": "^1.0.2"
   }
 }
