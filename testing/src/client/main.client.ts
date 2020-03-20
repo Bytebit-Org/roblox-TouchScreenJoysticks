@@ -3,7 +3,7 @@ import { Workspace, GuiService } from "@rbxts/services";
 
 do { wait() } while (!Workspace.CurrentCamera)
 
-wait();
+wait(1);
 
 (Workspace.CurrentCamera.Changed as unknown as RBXScriptSignal).Connect(() => {
     Workspace.CurrentCamera!.CameraType = Enum.CameraType.Scriptable;
