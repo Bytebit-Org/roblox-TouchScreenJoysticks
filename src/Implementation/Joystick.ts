@@ -235,7 +235,7 @@ export class Joystick implements IJoystick {
         this.input = undefined;
         this.isActive = false;
 
-        this.activated.fire(finalInput);
+        this.deactivated.fire(finalInput);
     }
 
     public render(screenGui: ScreenGui): void {
