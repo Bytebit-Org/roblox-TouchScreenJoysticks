@@ -2,7 +2,7 @@
 This project is an open-source tool for composing multiple, customized touch screen joysticks with the objective of improving the tooling available to Roblox developers for mobile games.
 
 # Links
-- [API Documentation](package/DOCUMENTATION.md)
+- [API Documentation](DOCUMENTATION.md)
 
 # Example
 ![tscreenshot_20200320-164323_roblox](https://user-images.githubusercontent.com/17803348/77207941-0dc5d700-6ad1-11ea-886b-adaef10fa48c.jpg)\
