@@ -11,7 +11,7 @@
 		"typeRoots": [ "../node_modules/@rbxts" ],
 
 		// required, configurable
-		"rootDir": "../src",
+		"rootDir": "src",
 		"outDir": "out",
 
 		// optional

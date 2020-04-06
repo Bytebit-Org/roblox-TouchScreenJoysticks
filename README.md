@@ -11,7 +11,7 @@ This project is an open-source tool for composing multiple, customized touch scr
 It only takes one line of code to create a joystick! Below is an example of just a handful of lines of code that can be used to quickly generate two joysticks, one on each side of the screen, and print their inputs:
 
 ```TS
-import { CompositeJoystickRenderer, SolidFilledCircle, Joystick, RectangleGuiWindowRegion } from "@rbxts/touch-screen-joysticks";
+import { CompositeJoystickRenderer, JoysticksManager, RectangleGuiWindowRegion, SolidFilledCircle } from "@rbxts/touch-screen-joysticks";
 import { Workspace, GuiService } from "@rbxts/services";
 
 do { wait() } while (!Workspace.CurrentCamera)
@@ -23,7 +23,9 @@ const realTopLeft = guiInsetTopLeft;
 const realBottomRight = Workspace.CurrentCamera.ViewportSize.sub(guiInsetBottomRight);
 const guiWindow = realBottomRight.sub(realTopLeft);
 
-const leftJoystick = Joystick.create({
+const joysticksManager = JoysticksManager.create()
+
+const leftJoystick = joysticksManager.createJoystick({
     activationRegion: new RectangleGuiWindowRegion(new Vector2(0, 0), new Vector2(guiWindow.X / 2, guiWindow.Y)),
     gutterRadiusInPixels: 50,
     inactiveCenterPoint: new Vector2(80, guiWindow.Y - 80),
@@ -38,7 +40,7 @@ leftJoystick.inputChanged.Connect(newInput => {
     print("left input", newInput);
 });
 
-const rightJoystick = Joystick.create({
+const rightJoystick = joysticksManager.createJoystick({
     activationRegion: new RectangleGuiWindowRegion(new Vector2(guiWindow.X / 2, 0), new Vector2(guiWindow.X, guiWindow.Y)),
     gutterRadiusInPixels: 50,
     inactiveCenterPoint: new Vector2(guiWindow.X - 80, guiWindow.Y - 80),

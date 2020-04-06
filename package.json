@@ -1,6 +1,6 @@
 {
   "name": "@rbxts/touch-screen-joysticks",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "",
   "main": "out/init.lua",
   "scripts": {
@@ -22,7 +22,14 @@
   },
   "types": "out/index.d.ts",
   "devDependencies": {
-    "@rbxts/types": "^1.0.343"
+    "@rbxts/types": "^1.0.343",
+    "@typescript-eslint/eslint-plugin": "^2.17.0",
+    "@typescript-eslint/parser": "^2.17.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.9.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-roblox-ts": "0.0.7",
+    "prettier": "^1.19.1"
   },
   "dependencies": {
     "@rbxts/dumpster": "^1.0.8",

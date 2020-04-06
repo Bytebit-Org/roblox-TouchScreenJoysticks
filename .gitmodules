@@ -1,7 +1,3 @@
-[submodule "tests/modules/lemur"]
-	path = tests/modules/lemur
-	url = https://github.com/LPGhatguy/lemur.git
-	branch = master
 [submodule "tests/modules/testez"]
 	path = tests/modules/testez
 	url = https://github.com/Roblox/testez.git

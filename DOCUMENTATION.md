@@ -138,30 +138,6 @@ Defaults to 0
 
 ## Joystick API
 
-### IJoystickConfiguration
-The interface for constructing a new [`IJoystick`](#IJoystick)
-
-#### Fields
-- activationRegion: [`IGuiWindowRegion`](#IGuiWindowRegion)\
-Defines the screen region in which the [`IJoystick`](#IJoystick) instance can be activated by the player's input
-- gutterRadiusInPixels: `number`\
-Defines the gutter radius in pixels
-- inactiveCenterPoint: `Vector2`\
-Defines the inactive center point in the GUI region of the [`IJoystick`](#IJoystick) instance
-- initializedEnabled?: `boolean`\
-Defines whether the [`IJoystick`](#IJoystick) instance should initialize as enabled\
-Defaults to false
-- initializedVisible?: `boolean`\
-Defines whether the [`IJoystick`](#IJoystick) instance should initialize as visible\
-Defaults to false
-- priorityLevel?: `number`\
-Defines the priority leve lof the [`IJoystick`](#IJoystick) instance\
-Defaults to 1
-- renderer: [`IJoystickRenderer`](#IJoystickRenderer)\
-Defines the renderer instance for the [`IJoystick`](#IJoystick) instance
-- relativeThumbRadius: `number`\
-Defines the thumb radius as a number in the range [0, 1] relative to the gutter radius
-
 ### IJoystick
 Defines a joystick
 
@@ -218,10 +194,6 @@ Fired when the instance's visibility has changed
 A `boolean` indicating whether the instance is now visible
 
 #### Instance methods
-`destroy(): void`\
-Destroys the instance, its renderers, any other associated instances, and disconnects all connections to its signals\
-An instance cannot be re-used after being destroyed
-
 `setActivationRegion(newRegion: IGuiWindowRegion): void`\
 Sets the activation region of the instance
 ##### Parameters
@@ -272,14 +244,55 @@ If the new value does not match the current state, then the `visibilityChanged` 
 - newValue\
 A `boolean` indicating whether the instance should be visible
 
-### Joystick
-The actual implementation of [`IJoystick`](#IJoystick)
+### IJoystickConfiguration
+The interface for constructing a new [`IJoystick`](#IJoystick)
 
-#### Static methods
-`Joystick.create(configuration: IJoystickConfiguration): IJoystick`\
-Creates a new instance
+#### Fields
+- activationRegion: [`IGuiWindowRegion`](#IGuiWindowRegion)\
+Defines the screen region in which the [`IJoystick`](#IJoystick) instance can be activated by the player's input
+- gutterRadiusInPixels: `number`\
+Defines the gutter radius in pixels
+- inactiveCenterPoint: `Vector2`\
+Defines the inactive center point in the GUI region of the [`IJoystick`](#IJoystick) instance
+- initializedEnabled?: `boolean`\
+Defines whether the [`IJoystick`](#IJoystick) instance should initialize as enabled\
+Defaults to false
+- initializedVisible?: `boolean`\
+Defines whether the [`IJoystick`](#IJoystick) instance should initialize as visible\
+Defaults to false
+- priorityLevel?: `number`\
+Defines the priority leve lof the [`IJoystick`](#IJoystick) instance\
+Defaults to 1
+- renderer: [`IJoystickRenderer`](#IJoystickRenderer)\
+Defines the renderer instance for the [`IJoystick`](#IJoystick) instance
+- relativeThumbRadius: `number`\
+Defines the thumb radius as a number in the range [0, 1] relative to the gutter radius
+
+### IJoysticksManager
+Manages and orchestrates user input for a list of Joysticks
+
+#### Instance methods
+`createJoystick(configuration: IJoystickConfiguration): IJoystick`\
+Creates a new [`IJoystick`](#IJoystick) based on the given [`IJoystickConfiguration`](#IJoystickConfiguration)
 ##### Parameters
 - configuration\
-An [`IJoystickConfiguration`](#IJoystickConfiguration) that defines the configuration parameters for the new [`IJoystick`](#IJoystick) instance
+The configuration for the new Joystick
+##### Returns
+The new [`IJoystick`](#IJoystick) instance
+
+`destroyJoystick(joystick: IJoystick): void`\
+Destroys the given [`IJoystick`](#IJoystick) instance
+##### Parameters
+- joystick\
+The [`IJoystick`](#IJoystick) instance to destroy
+##### Throws
+Throws when the given [`IJoystick`](#IJoystick) instance is not a member of this [`IJoysticksManager`](#IJoysticksManager)
+
+### JoysticksManager
+The actual implementation of [`IJoysticksManager`](#IJoysticksManager)
+
+#### Static methods
+`JoysticksManager.create(): IJoysticksManager`\
+Creates a new instance
 ##### Returns
 Returns the new instance
