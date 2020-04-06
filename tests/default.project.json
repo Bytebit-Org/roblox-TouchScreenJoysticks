@@ -4,6 +4,9 @@
 		"$className": "DataModel",
 		"ReplicatedStorage": {
 			"$className": "ReplicatedStorage",
+			"fitumi": {
+				"$path": "modules/fitumi/src"
+			},
 			"rbxts_include": {
 				"$path": "include",
 				"node_modules": {
