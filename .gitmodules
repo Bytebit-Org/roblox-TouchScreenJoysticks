@@ -4,5 +4,4 @@
 	branch = master
 [submodule "tests/modules/fitumi"]
 	path = tests/modules/fitumi
-	url = https://github.com/Bytebit-Org/Roblox-fitumi.git
-	branch = master
+	url = https://github.com/Bytebit-Org/fitumi.git
