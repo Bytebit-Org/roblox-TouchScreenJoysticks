@@ -110,6 +110,3 @@ dist
 *.rbxlx
 include/
 out/
-
-# testing
-tests/src
