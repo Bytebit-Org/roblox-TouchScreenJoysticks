@@ -1,0 +1,15 @@
+{
+	"name": "test-rojo-proj",
+	"tree": {
+		"$className": "Model",
+		"rbxts_include": {
+			"$path": "include",
+			"node_modules": {
+				"$path": "../node_modules/@rbxts"
+			}
+		},
+		"TS": {
+			"$path": "out"
+		}
+    }
+}

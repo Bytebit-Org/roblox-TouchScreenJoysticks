@@ -117,6 +117,9 @@ export class Joystick implements IJoystick {
                 this.enabled.fire();
             } else {
                 this.disabled.fire();
+                if (this.isActive) {
+                    this.deactivate();
+                }
             }
         }
     }
@@ -169,6 +172,7 @@ export class Joystick implements IJoystick {
         }
 
         this.renderer.destroy();
+        this.renderer = newRenderer;
 
         JoysticksManager.requestRender(this);
     }
@@ -182,9 +186,12 @@ export class Joystick implements IJoystick {
             this.isVisible = newValue;
 
             if (newValue) {
-                this.renderer.hide();
-            } else {
                 JoysticksManager.requestRender(this);
+            } else {
+                this.renderer.hide();
+                if (this.isActive) {
+                    this.deactivate();
+                }
             }
 
             this.visibilityChanged.fire(newValue);
@@ -195,6 +202,10 @@ export class Joystick implements IJoystick {
     public activate(inputPoint: Vector2): void {
         if (this.isDestroyed) {
             throw `Instance is destroyed`;
+        }
+
+        if (this.isActive) {
+            return;
         }
 
         const guiWindowSize = this.getGuiWindowSize();
@@ -226,6 +237,10 @@ export class Joystick implements IJoystick {
     public deactivate(): void {
         if (this.isDestroyed) {
             throw `Instance is destroyed`;
+        }
+
+        if (!this.isActive) {
+            return;
         }
 
         this.gutterCenterPoint = this.inactiveCenterPoint;

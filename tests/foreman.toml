@@ -1,0 +1,2 @@
+[tools]
+testez = { source = "Roblox/testez", version = "0.2.0" }
