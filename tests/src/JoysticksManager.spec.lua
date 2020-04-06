@@ -10,6 +10,47 @@ return function()
 	local createFakeInputObject = require(ReplicatedStorage.Tests.functions.createFakeInputObject)
 	local createFakeSignal = require(ReplicatedStorage.Tests.functions.createFakeSignal)
 
+	function getJoystickCreateConfigurations()
+		return {
+			{
+				activationRegion = a.fake(),
+				gutterRadiusInPixels = 10,
+				inactiveCenterPoint = Vector2.new(0, 0),
+				initializedEnabled = false,
+				initializedVisible = false,
+				renderer = a.fake(),
+				relativeThumbRadius = 0.5
+			},
+			{
+				activationRegion = a.fake(),
+				gutterRadiusInPixels = 10,
+				inactiveCenterPoint = Vector2.new(0, 0),
+				initializedEnabled = false,
+				initializedVisible = true,
+				renderer = a.fake(),
+				relativeThumbRadius = 0.5
+			},
+			{
+				activationRegion = a.fake(),
+				gutterRadiusInPixels = 10,
+				inactiveCenterPoint = Vector2.new(0, 0),
+				initializedEnabled = true,
+				initializedVisible = false,
+				renderer = a.fake(),
+				relativeThumbRadius = 0.5
+			},
+			{
+				activationRegion = a.fake(),
+				gutterRadiusInPixels = 10,
+				inactiveCenterPoint = Vector2.new(0, 0),
+				initializedEnabled = true,
+				initializedVisible = true,
+				renderer = a.fake(),
+				relativeThumbRadius = 0.5
+			}
+		}
+	end
+
     describe("JoysticksManager", function()
 		it("should be constructable and fulfill its interface", function()
 			local currentCameraGetter = function ()
@@ -50,20 +91,19 @@ return function()
 				userInputService
 			)
 
-			local joystick = nil
-			expect(function()
-				joystick = joysticksManager:createJoystick({
-					activationRegion = a.fake(),
-					gutterRadiusInPixels = 10,
-					inactiveCenterPoint = Vector2.new(0, 0),
-					renderer = a.fake(),
-					relativeThumbRadius = 0.5
-				})
-			end).never.to.throw()
+			local joysticks = {}
+			local joystickConfigurations = getJoystickCreateConfigurations()
+			for i = 1, #joystickConfigurations do
+				expect(function()
+					table.insert(joysticks, joysticksManager:createJoystick(joystickConfigurations[i]))
+				end).never.to.throw()
+			end
 
-			expect(function()
-				joysticksManager:destroyJoystick(joystick)
-			end).never.to.throw()
+			for i = 1, #joysticks do
+				expect(function()
+					joysticksManager:destroyJoystick(joysticks[i])
+				end).never.to.throw()
+			end
 		end)
 
 		it("should throw when attempting to destroy a joystick from another manager", function()
