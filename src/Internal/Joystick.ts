@@ -95,6 +95,8 @@ export class Joystick implements IJoystick {
 
 		this.signalsDumpster.burn();
 		this.renderer.destroy();
+
+		this.joysticksManager.deregisterJoystick(this);
 	}
 
 	public setActivationRegion(newRegion: IGuiWindowRegion) {

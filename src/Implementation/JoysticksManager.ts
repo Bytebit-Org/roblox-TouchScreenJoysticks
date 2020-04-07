@@ -120,26 +120,7 @@ export class JoysticksManager implements IJoysticksManager {
 
 	// Internal instance methods
 
-	public requestRender(joystick: Joystick) {
-		// TODO: Consider setting up some sort of event based system using RunService
-		this.renderJoystick(joystick);
-	}
-
-	// Private instance methods
-
-	private createScreenGui(displayOrder: number, name: string) {
-		const screenGui = new Instance("ScreenGui");
-		screenGui.DisplayOrder = displayOrder;
-		screenGui.Name = name;
-		screenGui.ResetOnSpawn = false;
-		screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling;
-
-		screenGui.Parent = this.screenGuiParent;
-
-		return screenGui;
-	}
-
-	private deregisterJoystick(oldJoystick: IJoystick) {
+	public deregisterJoystick(oldJoystick: IJoystick) {
 		const newArray = new Array<Joystick>();
 
 		for (const existingJoystick of this.sortedJoysticksArray) {
@@ -157,6 +138,25 @@ export class JoysticksManager implements IJoysticksManager {
 		this.sortedJoysticksArray = newArray;
 
 		this.joysticksSet.delete(oldJoystick);
+	}
+
+	public requestRender(joystick: Joystick) {
+		// TODO: Consider setting up some sort of event based system using RunService
+		this.renderJoystick(joystick);
+	}
+
+	// Private instance methods
+
+	private createScreenGui(displayOrder: number, name: string) {
+		const screenGui = new Instance("ScreenGui");
+		screenGui.DisplayOrder = displayOrder;
+		screenGui.Name = name;
+		screenGui.ResetOnSpawn = false;
+		screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling;
+
+		screenGui.Parent = this.screenGuiParent;
+
+		return screenGui;
 	}
 
 	private listenForTouchEvents() {

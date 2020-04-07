@@ -668,5 +668,46 @@ return function()
 
 			expect(a.callTo(joystick, "render", joystick, fitumi.wildcard):didHappen()).to.equal(true)
 		end)
+
+		it("should render joysticks when they request a render", function()
+			local currentCameraGetter = function ()
+				return a.fake()
+			end
+
+			local guiService = a.fake()
+			local screenGuisParent = Instance.new("Folder")
+			local userInputService = a.fake()
+
+			userInputService.TouchEnded = createNoopSignal()
+			userInputService.TouchMoved = createNoopSignal()
+			userInputService.TouchStarted = createNoopSignal()
+
+			local joysticksManager = JoysticksManager.new(
+				currentCameraGetter,
+				guiService,
+				instantiateJoystickFromConfig,
+				screenGuisParent,
+				userInputService
+			)
+
+			local joystick = joysticksManager:createJoystick({
+				activationRegion = a.fake(),
+				gutterRadiusInPixels = 10,
+				inactiveCenterPoint = Vector2.new(0, 0),
+				initializedEnabled = true,
+				initializedVisible = true,
+				renderer = a.fake(),
+				relativeThumbRadius = 0.5
+			})
+
+			fitumi.spy(joystick, "render")
+
+			joysticksManager:requestRender(joystick)
+
+			wait()
+			wait()
+
+			expect(a.callTo(joystick, "render", joystick, fitumi.wildcard):didHappen()).to.equal(true)
+		end)
     end)
 end
