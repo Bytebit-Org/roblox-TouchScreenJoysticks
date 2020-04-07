@@ -9,12 +9,7 @@ return function()
 
 	local createFakeInputObject = require(ReplicatedStorage.Tests.functions.createFakeInputObject)
 	local createFakeSignal = require(ReplicatedStorage.Tests.functions.createFakeSignal)
-
-	local function createNoopSignal()
-		local noopSignal = a.fake()
-		a.callTo(noopSignal, "Connect", noopSignal, fitumi.wildcard):returns(a.fake())
-		return noopSignal
-	end
+	local createNoopSignal = require(ReplicatedStorage.Tests.functions.createNoopSignal)
 
 	local function instantiateJoystickFromConfig(config)
 		local joystick = a.fake()
