@@ -108,5 +108,6 @@ dist
 
 # roblox-ts
 *.rbxlx
+*.rbxlx.lock
 include/
 out/
