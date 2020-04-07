@@ -55,13 +55,7 @@ export class CompositeJoystickRenderer implements IJoystickRenderer {
 		const thumbPosition = new UDim2(0.5 + relativeThumbPosition.X / 2, 0, 0.5 + relativeThumbPosition.Y / 2, 0);
 		const thumbSize = new UDim2(relativeThumbRadius, 0, relativeThumbRadius, 0);
 
-		this.gutterComponent.render(new Vector2(0.5, 0.5), gutterPosition, gutterSize, zIndex, parent);
-		this.thumbComponent.render(
-			new Vector2(0.5, 0.5),
-			thumbPosition,
-			thumbSize,
-			1,
-			this.gutterComponent.getParentableInstance(),
-		);
+		this.gutterComponent.render(gutterPosition, gutterSize, zIndex, parent);
+		this.thumbComponent.render(thumbPosition, thumbSize, 1, this.gutterComponent.getParentableInstance());
 	}
 }

@@ -13,11 +13,10 @@ export interface ICompositeJoystickRendererComponent extends IDestroyable {
 
 	/**
 	 * Renders the component with the given properties
-	 * @param anchorPoint The anchor point to set on the rendered GUI instance
-	 * @param position The position to set on the rendered GUI instance
+	 * @param position The position to set for the center on the rendered GUI instance
 	 * @param size The size to set on the rendered GUI instance
 	 * @param zIndex The Z-index to set on the rendered GUI instance
 	 * @param parent The parent for the rendered GUI instance
 	 */
-	render(anchorPoint: Vector2, position: UDim2, size: UDim2, zIndex: number, parent: Instance): void;
+	render(position: UDim2, size: UDim2, zIndex: number, parent: Instance): void;
 }

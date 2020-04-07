@@ -45,14 +45,13 @@ export class SolidFilledCircle implements ICompositeJoystickRendererComponent {
 		this.imageLabel.Parent = undefined;
 	}
 
-	public render(anchorPoint: Vector2, position: UDim2, size: UDim2, zIndex: number, parent: Instance) {
+	public render(position: UDim2, size: UDim2, zIndex: number, parent: Instance) {
 		if (this.isDestroyed) {
 			throw `Instance is destroyed`;
 		}
 
 		this.imageLabel.Parent = undefined;
 
-		this.imageLabel.AnchorPoint = anchorPoint;
 		this.imageLabel.Position = position;
 		this.imageLabel.Size = size;
 		this.imageLabel.ZIndex = zIndex;
