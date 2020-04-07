@@ -29,6 +29,10 @@ export class Image implements ICompositeJoystickRendererComponent {
 	}
 
 	public getParentableInstance() {
+		if (this.isDestroyed) {
+			throw `Instance is destroyed`;
+		}
+
 		return this.imageLabel;
 	}
 

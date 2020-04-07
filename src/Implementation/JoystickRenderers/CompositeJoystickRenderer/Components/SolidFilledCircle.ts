@@ -30,6 +30,10 @@ export class SolidFilledCircle implements ICompositeJoystickRendererComponent {
 	}
 
 	public getParentableInstance() {
+		if (this.isDestroyed) {
+			throw `Instance is destroyed`;
+		}
+
 		return this.imageLabel;
 	}
 

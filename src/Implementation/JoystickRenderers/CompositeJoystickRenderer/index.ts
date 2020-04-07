@@ -45,6 +45,10 @@ export class CompositeJoystickRenderer implements IJoystickRenderer {
 		zIndex: number,
 		parent: Instance,
 	) {
+		if (this.isDestroyed) {
+			throw `Instance is destroyed`;
+		}
+
 		const gutterPosition = new UDim2(0, absoluteCenter.X, 0, absoluteCenter.Y);
 		const gutterSize = new UDim2(0, 2 * gutterRadiusInPixels, 0, 2 * gutterRadiusInPixels);
 
