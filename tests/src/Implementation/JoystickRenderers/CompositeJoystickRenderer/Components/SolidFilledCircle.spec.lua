@@ -3,7 +3,7 @@ return function()
 
 	local fitumi = require(ReplicatedStorage:WaitForChild("fitumi"))
     local TS = require(ReplicatedStorage:WaitForChild("rbxts_include"):WaitForChild("RuntimeLib"));
-	local Image = TS.import(script, ReplicatedStorage, "TS", "Implementation", "CompositeJoystickRenderer", "Components", "Image").Image;
+	local SolidFilledCircle = TS.import(script, ReplicatedStorage, "TS", "Implementation", "JoystickRenderers", "CompositeJoystickRenderer", "Components", "SolidFilledCircle").SolidFilledCircle;
 
 	local a = fitumi.a
 
