@@ -64,7 +64,7 @@ return function()
 		}
 	end
 
-    describe("JoysticksManager", function()
+	describe("JoysticksManager", function()
 		it("should be constructable and fulfill its interface", function()
 			local currentCameraGetter = function ()
 				return a.fake()
@@ -152,18 +152,15 @@ return function()
 
 			userInputService.TouchEnded = a.fake()
 			local touchEndedConnection = a.fake()
-			fitumi.spy(touchEndedConnection, "Disconnect")
-			a.callTo(userInputService.TouchEnded, "Connect", userInputService.TouchEnded, fitumi.wildcard):returns(touchEndedConnection)
+			a.callTo(userInputService.TouchEnded["Connect"], userInputService.TouchEnded, fitumi.wildcard):returns(touchEndedConnection)
 
 			userInputService.TouchMoved = a.fake()
 			local touchMovedConnection = a.fake()
-			fitumi.spy(touchMovedConnection, "Disconnect")
-			a.callTo(userInputService.TouchMoved, "Connect", userInputService.TouchMoved, fitumi.wildcard):returns(touchMovedConnection)
+			a.callTo(userInputService.TouchMoved["Connect"], userInputService.TouchMoved, fitumi.wildcard):returns(touchMovedConnection)
 
 			userInputService.TouchStarted = a.fake()
 			local touchStartedConnection = a.fake()
-			fitumi.spy(touchStartedConnection, "Disconnect")
-			a.callTo(userInputService.TouchStarted, "Connect", userInputService.TouchStarted, fitumi.wildcard):returns(touchStartedConnection)
+			a.callTo(userInputService.TouchStarted["Connect"], userInputService.TouchStarted, fitumi.wildcard):returns(touchStartedConnection)
 
 			local joysticksManager = JoysticksManager.new(
 				currentCameraGetter,
@@ -175,9 +172,9 @@ return function()
 
 			joysticksManager:destroy()
 
-			expect(a.callTo(touchEndedConnection, "Disconnect", touchEndedConnection):didHappen()).to.equal(true)
-			expect(a.callTo(touchMovedConnection, "Disconnect", touchMovedConnection):didHappen()).to.equal(true)
-			expect(a.callTo(touchStartedConnection, "Disconnect", touchStartedConnection):didHappen()).to.equal(true)
+			expect(a.callTo(touchEndedConnection["Disconnect"], touchEndedConnection):didHappen()).to.equal(true)
+			expect(a.callTo(touchMovedConnection["Disconnect"], touchMovedConnection):didHappen()).to.equal(true)
+			expect(a.callTo(touchStartedConnection["Disconnect"], touchStartedConnection):didHappen()).to.equal(true)
 			expect(#screenGuisParent:GetChildren()).to.equal(0)
 		end)
 
@@ -223,7 +220,6 @@ return function()
 
 			local joystickInstantiator = function(config)
 				local joystick = instantiateJoystickFromConfig(config)
-				fitumi.spy(joystick, "render")
 				return joystick
 			end
 
@@ -244,7 +240,7 @@ return function()
 			)
 
 			local activationRegion = a.fake()
-			a.callTo(activationRegion, "isPointInRegion", activationRegion, fitumi.wildcard):returns(true)
+			a.callTo(activationRegion["isPointInRegion"], activationRegion, fitumi.wildcard):returns(true)
 
 			local joystick = joysticksManager:createJoystick({
 				activationRegion = activationRegion,
@@ -256,7 +252,7 @@ return function()
 				relativeThumbRadius = 0.5
 			})
 
-			expect(a.callTo(joystick, "render", joystick, fitumi.wildcard):didHappen()).to.equal(true)
+			expect(a.callTo(joystick["render"], joystick, fitumi.wildcard):didHappen()).to.equal(true)
 		end)
 
 		local function testSingleJoystickActivation(isEnabled, isVisible, expectedIsActiveValue)
@@ -281,7 +277,7 @@ return function()
 			)
 
 			local activationRegion = a.fake()
-			a.callTo(activationRegion, "isPointInRegion", activationRegion, fitumi.wildcard):returns(true)
+			a.callTo(activationRegion["isPointInRegion"], activationRegion, fitumi.wildcard):returns(true)
 
 			local joystick = joysticksManager:createJoystick({
 				activationRegion = activationRegion,
@@ -293,14 +289,13 @@ return function()
 				relativeThumbRadius = 0.5
 			})
 
-			fitumi.spy(joystick, "activate")
 
 			userInputService.TouchStarted:Fire(createFakeInputObject(), false)
 
 			if expectedIsActiveValue then
-				expect(a.callTo(joystick, "activate", joystick, fitumi.wildcard):didHappen()).to.equal(true)
+				expect(a.callTo(joystick["activate"], joystick, fitumi.wildcard):didHappen()).to.equal(true)
 			else
-				expect(a.callTo(joystick, "activate", joystick, fitumi.wildcard):didNotHappen()).to.equal(true)
+				expect(a.callTo(joystick["activate"], joystick, fitumi.wildcard):didNotHappen()).to.equal(true)
 			end
 		end
 
@@ -338,7 +333,7 @@ return function()
 			)
 
 			local activationRegion = a.fake()
-			a.callTo(activationRegion, "isPointInRegion", activationRegion, fitumi.wildcard):returns(true)
+			a.callTo(activationRegion["isPointInRegion"], activationRegion, fitumi.wildcard):returns(true)
 
 			local joystick = joysticksManager:createJoystick({
 				activationRegion = activationRegion,
@@ -350,13 +345,12 @@ return function()
 				relativeThumbRadius = 0.5
 			})
 
-			fitumi.spy(joystick, "activate")
-			fitumi.spy(joystick, "render")
+			fitumi.clearCallHistory(joystick["render"])
 
 			userInputService.TouchStarted:Fire(createFakeInputObject(), false)
 
-			expect(a.callTo(joystick, "activate", joystick, fitumi.wildcard):didHappen()).to.equal(true)
-			expect(a.callTo(joystick, "render", joystick, fitumi.wildcard):didHappen()).to.equal(true)
+			expect(a.callTo(joystick["activate"], joystick, fitumi.wildcard):didHappen()).to.equal(true)
+			expect(a.callTo(joystick["render"], joystick, fitumi.wildcard):didHappen()).to.equal(true)
 		end)
 
 		local function testTwoJoysticksActivation(shouldActivateJoystickConfig, shouldNotActivateJoystickConfig)
@@ -381,23 +375,21 @@ return function()
 			)
 
 			local shouldActivateJoystick = joysticksManager:createJoystick(shouldActivateJoystickConfig)
-			fitumi.spy(shouldActivateJoystick, "activate")
 
 			local shouldNotActivateJoystick = joysticksManager:createJoystick(shouldNotActivateJoystickConfig)
-			fitumi.spy(shouldNotActivateJoystick, "activate")
 
 			userInputService.TouchStarted:Fire(createFakeInputObject(), false)
 
-			expect(a.callTo(shouldActivateJoystick, "activate", shouldActivateJoystick, fitumi.wildcard):didHappen()).to.equal(true)
-			expect(a.callTo(shouldNotActivateJoystick, "activate", shouldNotActivateJoystick, fitumi.wildcard):didNotHappen()).to.equal(true)
+			expect(a.callTo(shouldActivateJoystick["activate"], shouldActivateJoystick, fitumi.wildcard):didHappen()).to.equal(true)
+			expect(a.callTo(shouldNotActivateJoystick["activate"], shouldNotActivateJoystick, fitumi.wildcard):didNotHappen()).to.equal(true)
 		end
 
 		it("should activate only joysticks where the touch starts in the appropriate region", function()
 			local returnsTrueActivationRegion = a.fake()
-			a.callTo(returnsTrueActivationRegion, "isPointInRegion", returnsTrueActivationRegion, fitumi.wildcard):returns(true)
+			a.callTo(returnsTrueActivationRegion["isPointInRegion"], returnsTrueActivationRegion, fitumi.wildcard):returns(true)
 
 			local returnsFalseActivationRegion = a.fake()
-			a.callTo(returnsFalseActivationRegion, "isPointInRegion", returnsFalseActivationRegion, fitumi.wildcard):returns(false)
+			a.callTo(returnsFalseActivationRegion["isPointInRegion"], returnsFalseActivationRegion, fitumi.wildcard):returns(false)
 
 			local shouldActivateJoystickConfig = {
 				activationRegion = returnsTrueActivationRegion,
@@ -424,7 +416,7 @@ return function()
 
 		it("should activate only the highest priority joystick when a touch starts at an overlapping point", function()
 			local activationRegion = a.fake()
-			a.callTo(activationRegion, "isPointInRegion", activationRegion, fitumi.wildcard):returns(true)
+			a.callTo(activationRegion["isPointInRegion"], activationRegion, fitumi.wildcard):returns(true)
 
 			local shouldActivateJoystickConfig = {
 				activationRegion = activationRegion,
@@ -453,7 +445,7 @@ return function()
 
 		it("should not activate a disabled joystick with higher priority when a touch starts at an overlapping point", function()
 			local activationRegion = a.fake()
-			a.callTo(activationRegion, "isPointInRegion", activationRegion, fitumi.wildcard):returns(true)
+			a.callTo(activationRegion["isPointInRegion"], activationRegion, fitumi.wildcard):returns(true)
 
 			local shouldActivateJoystickConfig = {
 				activationRegion = activationRegion,
@@ -502,7 +494,7 @@ return function()
 			)
 
 			local activationRegion = a.fake()
-			a.callTo(activationRegion, "isPointInRegion", activationRegion, fitumi.wildcard):returns(true)
+			a.callTo(activationRegion["isPointInRegion"], activationRegion, fitumi.wildcard):returns(true)
 
 			local joystick = joysticksManager:createJoystick({
 				activationRegion = activationRegion,
@@ -519,11 +511,10 @@ return function()
 			userInputService.TouchStarted:Fire(inputObject, false)
 			joystick.isActive = true
 
-			fitumi.spy(joystick, "updateInput")
 
 			userInputService.TouchMoved:Fire(inputObject)
 
-			expect(a.callTo(joystick, "updateInput", joystick, fitumi.wildcard):didHappen()).to.equal(true)
+			expect(a.callTo(joystick["updateInput"], joystick, fitumi.wildcard):didHappen()).to.equal(true)
 		end)
 
 		it("should render joystick inputs when their touches move", function()
@@ -548,7 +539,7 @@ return function()
 			)
 
 			local activationRegion = a.fake()
-			a.callTo(activationRegion, "isPointInRegion", activationRegion, fitumi.wildcard):returns(true)
+			a.callTo(activationRegion["isPointInRegion"], activationRegion, fitumi.wildcard):returns(true)
 
 			local joystick = joysticksManager:createJoystick({
 				activationRegion = activationRegion,
@@ -565,11 +556,11 @@ return function()
 			userInputService.TouchStarted:Fire(inputObject, false)
 			joystick.isActive = true
 
-			fitumi.spy(joystick, "render")
+			fitumi.clearCallHistory(joystick["render"])
 
 			userInputService.TouchMoved:Fire(inputObject)
 
-			expect(a.callTo(joystick, "render", joystick, fitumi.wildcard):didHappen()).to.equal(true)
+			expect(a.callTo(joystick["render"], joystick, fitumi.wildcard):didHappen()).to.equal(true)
 		end)
 
 		it("should deactivate joysticks when their touches end", function()
@@ -594,7 +585,7 @@ return function()
 			)
 
 			local activationRegion = a.fake()
-			a.callTo(activationRegion, "isPointInRegion", activationRegion, fitumi.wildcard):returns(true)
+			a.callTo(activationRegion["isPointInRegion"], activationRegion, fitumi.wildcard):returns(true)
 
 			local joystick = joysticksManager:createJoystick({
 				activationRegion = activationRegion,
@@ -611,11 +602,9 @@ return function()
 			userInputService.TouchStarted:Fire(inputObject, false)
 			joystick.isActive = true
 
-			fitumi.spy(joystick, "deactivate")
-
 			userInputService.TouchEnded:Fire(inputObject)
 
-			expect(a.callTo(joystick, "deactivate", joystick):didHappen()).to.equal(true)
+			expect(a.callTo(joystick["deactivate"], joystick):didHappen()).to.equal(true)
 		end)
 
 		it("should render joysticks when their touches end", function()
@@ -640,7 +629,7 @@ return function()
 			)
 
 			local activationRegion = a.fake()
-			a.callTo(activationRegion, "isPointInRegion", activationRegion, fitumi.wildcard):returns(true)
+			a.callTo(activationRegion["isPointInRegion"], activationRegion, fitumi.wildcard):returns(true)
 
 			local joystick = joysticksManager:createJoystick({
 				activationRegion = activationRegion,
@@ -657,11 +646,11 @@ return function()
 			userInputService.TouchStarted:Fire(inputObject, false)
 			joystick.isActive = true
 
-			fitumi.spy(joystick, "render")
+			fitumi.clearCallHistory(joystick["render"])
 
 			userInputService.TouchEnded:Fire(inputObject)
 
-			expect(a.callTo(joystick, "render", joystick, fitumi.wildcard):didHappen()).to.equal(true)
+			expect(a.callTo(joystick["render"], joystick, fitumi.wildcard):didHappen()).to.equal(true)
 		end)
 
 		it("should render joysticks when they request a render", function()
@@ -695,14 +684,14 @@ return function()
 				relativeThumbRadius = 0.5
 			})
 
-			fitumi.spy(joystick, "render")
+			fitumi.clearCallHistory(joystick["render"])
 
 			joysticksManager:requestRender(joystick)
 
 			wait()
 			wait()
 
-			expect(a.callTo(joystick, "render", joystick, fitumi.wildcard):didHappen()).to.equal(true)
+			expect(a.callTo(joystick["render"], joystick, fitumi.wildcard):didHappen()).to.equal(true)
 		end)
     end)
 end

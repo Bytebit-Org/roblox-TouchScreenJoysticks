@@ -51,13 +51,10 @@ return function()
 			local thumbComponent = a.fake()
 			local compositeJoystickRenderer = CompositeJoystickRenderer.new(gutterComponent, thumbComponent)
 
-			fitumi.spy(gutterComponent, "destroy")
-			fitumi.spy(thumbComponent, "destroy")
-
 			compositeJoystickRenderer:destroy()
 
-			expect(a.callTo(gutterComponent, "destroy", gutterComponent):didHappen()).to.equal(true)
-			expect(a.callTo(thumbComponent, "destroy", thumbComponent):didHappen()).to.equal(true)
+			expect(a.callTo(gutterComponent["destroy"], gutterComponent):didHappen()).to.equal(true)
+			expect(a.callTo(thumbComponent["destroy"], thumbComponent):didHappen()).to.equal(true)
 		end)
 
 		it("should hide its components", function()
@@ -65,22 +62,16 @@ return function()
 			local thumbComponent = a.fake()
 			local compositeJoystickRenderer = CompositeJoystickRenderer.new(gutterComponent, thumbComponent)
 
-			fitumi.spy(gutterComponent, "hide")
-			fitumi.spy(thumbComponent, "hide")
-
 			compositeJoystickRenderer:hide()
 
-			expect(a.callTo(gutterComponent, "hide", gutterComponent):didHappen()).to.equal(true)
-			expect(a.callTo(thumbComponent, "hide", thumbComponent):didHappen()).to.equal(true)
+			expect(a.callTo(gutterComponent["hide"], gutterComponent):didHappen()).to.equal(true)
+			expect(a.callTo(thumbComponent["hide"], thumbComponent):didHappen()).to.equal(true)
 		end)
 
 		it("should render its components", function()
 			local gutterComponent = a.fake()
 			local thumbComponent = a.fake()
 			local compositeJoystickRenderer = CompositeJoystickRenderer.new(gutterComponent, thumbComponent)
-
-			fitumi.spy(gutterComponent, "render")
-			fitumi.spy(thumbComponent, "render")
 
 			compositeJoystickRenderer:render(
 				--[[ absoluteCenter ]] Vector2.new(),
@@ -92,16 +83,14 @@ return function()
 			)
 
 			expect(a.callTo(
-				gutterComponent,
-				"render",
+				gutterComponent["render"],
 				gutterComponent,
 				fitumi.wildcard,
 				fitumi.wildcard,
 				fitumi.wildcard,
 				fitumi.wildcard):didHappen()).to.equal(true)
 			expect(a.callTo(
-				thumbComponent,
-				"render",
+				thumbComponent["render"],
 				thumbComponent,
 				fitumi.wildcard,
 				fitumi.wildcard,
@@ -156,42 +145,45 @@ return function()
 			local thumbComponent = a.fake()
 			local compositeJoystickRenderer = CompositeJoystickRenderer.new(gutterComponent, thumbComponent)
 
-			local renderCallArgs = nil
-			thumbComponent.render = function(self, position, size, _, parent)
-				renderCallArgs = {
-					position = position,
-					size = size,
-					parent = parent
-				}
-			end
-
-			local theta = math.random() * 2*math.pi
-			local relativeThumbPosition = Vector2.new(math.cos(theta), math.sin(theta))
-			local relativeThumbRadius = 0.5
 			local thumbParent = a.fake()
 
-			a.callTo(gutterComponent, "getParentableInstance", gutterComponent):returns(thumbParent)
+			a.callTo(gutterComponent["getParentableInstance"], gutterComponent):returns(thumbParent)
 
-			compositeJoystickRenderer:render(
-				--[[ absoluteCenter ]] Vector2.new(),
-				--[[ relativeThumbPosition ]] relativeThumbPosition,
-				--[[ gutterRadiusInPixels ]] 1,
-				--[[ relativeThumbRadius ]] relativeThumbRadius,
-				--[[ zIndex ]] 1,
-				--[[ parent ]] a.fake()
-			)
+			for _ = 1, 30 do
+				local renderCallArgs = nil
+				thumbComponent.render = function(self, position, size, _, parent)
+					renderCallArgs = {
+						position = position,
+						size = size,
+						parent = parent
+					}
+				end
 
-			expect(renderCallArgs).to.be.ok()
+				local theta = math.pi - (math.random() * 2*math.pi)
+				local relativeThumbPosition = Vector2.new(math.cos(theta), math.sin(theta))
+				local relativeThumbRadius = 0.5
 
-			local renderedThumbPosition = Vector2.new(renderCallArgs.position.X.Scale, renderCallArgs.position.Y.Scale)
-			local renderedUnitCircleThumbPosition = renderedThumbPosition - Vector2.new(0.5, 0.5)
-			local renderedTheta = math.atan2(renderedUnitCircleThumbPosition.Y, renderedUnitCircleThumbPosition.X)
-			expect(renderedTheta).to.be.near(theta, 1 / 128)
+				compositeJoystickRenderer:render(
+					--[[ absoluteCenter ]] Vector2.new(),
+					--[[ relativeThumbPosition ]] relativeThumbPosition,
+					--[[ gutterRadiusInPixels ]] 1,
+					--[[ relativeThumbRadius ]] relativeThumbRadius,
+					--[[ zIndex ]] 1,
+					--[[ parent ]] a.fake()
+				)
 
-			expect(renderCallArgs.size.X.Scale).to.equal(relativeThumbRadius)
-			expect(renderCallArgs.size.Y.Scale).to.equal(relativeThumbRadius)
+				expect(renderCallArgs).to.be.ok()
 
-			expect(renderCallArgs.parent).to.equal(thumbParent)
+				local renderedThumbPosition = Vector2.new(renderCallArgs.position.X.Scale, renderCallArgs.position.Y.Scale)
+				local renderedUnitCircleThumbPosition = renderedThumbPosition - Vector2.new(0.5, 0.5)
+				local renderedTheta = math.atan2(renderedUnitCircleThumbPosition.Y, renderedUnitCircleThumbPosition.X)
+				expect(renderedTheta).to.be.near(theta, 1 / 128)
+
+				expect(renderCallArgs.size.X.Scale).to.equal(relativeThumbRadius)
+				expect(renderCallArgs.size.Y.Scale).to.equal(relativeThumbRadius)
+
+				expect(renderCallArgs.parent).to.equal(thumbParent)
+			end
 		end)
 	end)
 end
