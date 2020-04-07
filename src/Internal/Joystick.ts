@@ -3,10 +3,10 @@ import { IJoystick } from "../Interfaces/IJoystick";
 import { ISignal, Signal } from "@rbxts/signals-tooling";
 import { IGuiWindowRegion } from "../Interfaces/IGuiWindowRegion";
 import { IJoystickRenderer } from "../Interfaces/IJoystickRenderer";
-import { Dumpster, IDestroyable } from "@rbxts/dumpster";
+import { Dumpster } from "@rbxts/dumpster";
 import { JoysticksManager } from "../Implementation/JoysticksManager";
 
-export class Joystick implements IJoystick, IDestroyable {
+export class Joystick implements IJoystick {
 	// Public instance members
 	public input?: Vector2;
 	public isActive: boolean;
@@ -87,6 +87,10 @@ export class Joystick implements IJoystick, IDestroyable {
 
 	// Public instance methods
 	public destroy() {
+		if (this.isActive) {
+			this.deactivate();
+		}
+
 		this.isDestroyed = true;
 
 		this.signalsDumpster.burn();

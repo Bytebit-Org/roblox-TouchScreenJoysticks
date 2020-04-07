@@ -1,13 +1,29 @@
 return function ()
-	local bindableEvent = Instance.new("BindableEvent")
+	local handlers = {}
 
 	return {
 		Connect = function(self, handlerFunction)
-			return bindableEvent.Event:Connect(handlerFunction)
+			table.insert(handlers, handlerFunction)
+			return {
+				Disconnect = function()
+					local removeIndex = #handlers + 1
+
+					for i = 1, #handlers do
+						if handlers[i] == handlerFunction then
+							removeIndex = i
+							break
+						end
+					end
+
+					table.remove(handlers, removeIndex)
+				end
+			}
 		end,
 
 		Fire = function(self, ...)
-			bindableEvent:Fire(...)
+			for i = 1, #handlers do
+				handlers[i](...)
+			end
 		end
 	}
 end

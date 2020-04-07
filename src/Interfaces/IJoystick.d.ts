@@ -4,7 +4,7 @@ import { IGuiWindowRegion } from "./IGuiWindowRegion";
 import { IJoystickRenderer } from "./IJoystickRenderer";
 
 /** Defines a joystick */
-export interface IJoystick {
+export interface IJoystick extends IDestroyable {
 	// Instance members
 	/**
 	 * A readonly, optional field that reports the current input for the instance, if any.

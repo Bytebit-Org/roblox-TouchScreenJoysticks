@@ -3,6 +3,7 @@ import { Players, UserInputService, GuiService, Workspace } from "@rbxts/service
 import { IJoysticksManager } from "../Interfaces/IJoysticksManager";
 import { IJoystickConfiguration } from "../Interfaces/IJoystickConfiguration";
 import { IJoystick } from "../Interfaces/IJoystick";
+import { Dumpster } from "@rbxts/dumpster";
 
 export class JoysticksManager implements IJoysticksManager {
 	/** A sorted array of the registered joysticks in ascending order of priority */
@@ -15,9 +16,18 @@ export class JoysticksManager implements IJoysticksManager {
 	private readonly activeJoysticksByTouchInputObject: Map<InputObject, Joystick>;
 	private readonly touchInputObjectsByActiveJoystick: Map<IJoystick, InputObject>;
 
+	private readonly dumpster: Dumpster;
+	private isDestroyed = false;
+
 	// Dependencies
 	private readonly currentCameraGetter: () => Camera | undefined;
 	private readonly guiService: GuiService;
+	private readonly joystickInstantiator: (
+		configuration: IJoystickConfiguration,
+		joysticksManager: JoysticksManager,
+		currentCameraGetter: () => Camera | undefined,
+		guiService: GuiService,
+	) => Joystick;
 	private readonly screenGuiParent: Instance;
 	private readonly userInputService: UserInputService;
 
@@ -25,11 +35,18 @@ export class JoysticksManager implements IJoysticksManager {
 	private constructor(
 		currentCameraGetter: () => Camera | undefined,
 		guiService: GuiService,
+		joystickInstantiator: (
+			configuration: IJoystickConfiguration,
+			joysticksManager: JoysticksManager,
+			currentCameraGetter: () => Camera | undefined,
+			guiService: GuiService,
+		) => Joystick,
 		screenGuiParent: Instance,
 		userInputService: UserInputService,
 	) {
 		this.currentCameraGetter = currentCameraGetter;
 		this.guiService = guiService;
+		this.joystickInstantiator = joystickInstantiator;
 		this.screenGuiParent = screenGuiParent;
 		this.userInputService = userInputService;
 
@@ -42,19 +59,40 @@ export class JoysticksManager implements IJoysticksManager {
 		this.activeJoysticksByTouchInputObject = new Map<InputObject, Joystick>();
 		this.touchInputObjectsByActiveJoystick = new Map<IJoystick, InputObject>();
 
+		this.dumpster = new Dumpster();
+
+		this.dumpster.dump(this.activeJoysticksScreenGui);
+		this.dumpster.dump(this.inactiveJoysticksScreenGui);
+
 		this.listenForTouchEvents();
 	}
 
 	/** Creates a new instance */
 	public static create(): IJoysticksManager {
 		const playerGui = Players.LocalPlayer.WaitForChild("PlayerGui");
-		return new JoysticksManager(() => Workspace.CurrentCamera, GuiService, playerGui, UserInputService);
+		return new JoysticksManager(
+			() => Workspace.CurrentCamera,
+			GuiService,
+			(joystickConfiguration, joysticksManager, currentCameraGetter, guiService) =>
+				new Joystick(joystickConfiguration, joysticksManager, currentCameraGetter, guiService),
+			playerGui,
+			UserInputService,
+		);
 	}
 
 	// Public instance methods
 
 	public createJoystick(joystickConfiguration: IJoystickConfiguration) {
-		const newJoystick = new Joystick(joystickConfiguration, this, this.currentCameraGetter, this.guiService);
+		if (this.isDestroyed) {
+			throw `Instance is destroyed`;
+		}
+
+		const newJoystick = this.joystickInstantiator(
+			joystickConfiguration,
+			this,
+			this.currentCameraGetter,
+			this.guiService,
+		);
 
 		this.registerJoystick(newJoystick);
 
@@ -65,14 +103,19 @@ export class JoysticksManager implements IJoysticksManager {
 		return newJoystick;
 	}
 
-	public destroyJoystick(joystick: IJoystick) {
-		if (!this.joysticksSet.has(joystick)) {
-			throw `Attempt to destroy a Joystick that was not created by this manager`;
+	public destroy() {
+		this.isDestroyed = true;
+
+		for (const key of Object.keys(this.activeJoysticksByTouchInputObject)) {
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			const activeJoystick = this.activeJoysticksByTouchInputObject.get(key)!;
+			activeJoystick.deactivate();
+
+			this.activeJoysticksByTouchInputObject.delete(key);
+			this.touchInputObjectsByActiveJoystick.delete(activeJoystick);
 		}
 
-		joystick.destroy();
-
-		this.deregisterJoystick(joystick);
+		this.dumpster.burn();
 	}
 
 	// Internal instance methods
@@ -117,52 +160,60 @@ export class JoysticksManager implements IJoysticksManager {
 	}
 
 	private listenForTouchEvents() {
-		this.userInputService.TouchStarted.Connect((inputObject, didGameProcessEvent) => {
-			if (didGameProcessEvent) {
-				return;
-			}
-
-			const inputPoint = new Vector2(inputObject.Position.X, inputObject.Position.Y);
-
-			for (let i = this.sortedJoysticksArray.size() - 1; i >= 0; i--) {
-				const joystick = this.sortedJoysticksArray[i];
-				if (joystick.activationRegion.isPointInRegion(inputPoint)) {
-					if (joystick.isActive) {
-						return;
-					}
-
-					this.activeJoysticksByTouchInputObject.set(inputObject, joystick);
-					this.touchInputObjectsByActiveJoystick.set(joystick, inputObject);
-
-					joystick.activate(inputPoint);
-					this.renderJoystick(joystick);
+		this.dumpster.dump(
+			this.userInputService.TouchStarted.Connect((inputObject, didGameProcessEvent) => {
+				if (didGameProcessEvent) {
+					return;
 				}
-			}
-		});
 
-		this.userInputService.TouchMoved.Connect(inputObject => {
-			const activeJoystick = this.activeJoysticksByTouchInputObject.get(inputObject);
-			if (activeJoystick === undefined) {
-				return;
-			}
+				const inputPoint = new Vector2(inputObject.Position.X, inputObject.Position.Y);
 
-			const inputPoint = new Vector2(inputObject.Position.X, inputObject.Position.Y);
-			activeJoystick.updateInput(inputPoint);
-			this.renderJoystick(activeJoystick);
-		});
+				for (let i = this.sortedJoysticksArray.size() - 1; i >= 0; i--) {
+					const joystick = this.sortedJoysticksArray[i];
+					if (joystick.isEnabled && joystick.activationRegion.isPointInRegion(inputPoint)) {
+						if (joystick.isActive) {
+							return;
+						}
 
-		this.userInputService.TouchEnded.Connect(inputObject => {
-			const activeJoystick = this.activeJoysticksByTouchInputObject.get(inputObject);
-			if (activeJoystick === undefined) {
-				return;
-			}
+						this.activeJoysticksByTouchInputObject.set(inputObject, joystick);
+						this.touchInputObjectsByActiveJoystick.set(joystick, inputObject);
 
-			this.activeJoysticksByTouchInputObject.delete(inputObject);
-			this.touchInputObjectsByActiveJoystick.delete(activeJoystick);
+						joystick.activate(inputPoint);
+						this.renderJoystick(joystick);
 
-			activeJoystick.deactivate();
-			this.renderJoystick(activeJoystick);
-		});
+						break;
+					}
+				}
+			}),
+		);
+
+		this.dumpster.dump(
+			this.userInputService.TouchMoved.Connect(inputObject => {
+				const activeJoystick = this.activeJoysticksByTouchInputObject.get(inputObject);
+				if (activeJoystick === undefined) {
+					return;
+				}
+
+				const inputPoint = new Vector2(inputObject.Position.X, inputObject.Position.Y);
+				activeJoystick.updateInput(inputPoint);
+				this.renderJoystick(activeJoystick);
+			}),
+		);
+
+		this.dumpster.dump(
+			this.userInputService.TouchEnded.Connect(inputObject => {
+				const activeJoystick = this.activeJoysticksByTouchInputObject.get(inputObject);
+				if (activeJoystick === undefined) {
+					return;
+				}
+
+				this.activeJoysticksByTouchInputObject.delete(inputObject);
+				this.touchInputObjectsByActiveJoystick.delete(activeJoystick);
+
+				activeJoystick.deactivate();
+				this.renderJoystick(activeJoystick);
+			}),
+		);
 	}
 
 	private registerJoystick(newJoystick: Joystick) {
@@ -170,10 +221,6 @@ export class JoysticksManager implements IJoysticksManager {
 
 		let hasNewJoystickBeenAddedYet = false;
 		for (const existingJoystick of this.sortedJoysticksArray) {
-			if (!existingJoystick.isEnabled || !existingJoystick.isVisible) {
-				continue;
-			}
-
 			if (!hasNewJoystickBeenAddedYet && newJoystick.priorityLevel < existingJoystick.priorityLevel) {
 				newArray.push(newJoystick);
 				hasNewJoystickBeenAddedYet = true;
