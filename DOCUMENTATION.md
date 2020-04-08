@@ -1,5 +1,4 @@
 # API documentation
-*This API documentation is a WIP and subject to change. For now, this is intended as the goal API.*
 
 ## Gui Window regions
 
