@@ -1,2 +1,14 @@
+# directories
+.github/
+.vscode/
 src/
 tests/
+
+# files
+.editorconfig
+.eslintrc
+.gitignore
+.gitmodules
+roblox-testez.toml
+roblox.toml
+selene.toml
