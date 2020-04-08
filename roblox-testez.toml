@@ -1,0 +1,24 @@
+[selene]
+base = "roblox"
+name = "roblox-testez"
+
+[describe]
+[[describe.args]]
+type = "string"
+required = true
+
+[[describe.args]]
+type = "function"
+required = true
+
+[[it.args]]
+type = "string"
+required = true
+
+[[it.args]]
+type = "function"
+required = true
+
+[[expect.args]]
+type = "any"
+required = true

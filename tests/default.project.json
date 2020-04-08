@@ -1,0 +1,27 @@
+{
+    "name": "test-rojo-proj",
+    "tree": {
+		"$className": "DataModel",
+		"ReplicatedStorage": {
+			"$className": "ReplicatedStorage",
+			"fitumi": {
+				"$path": "modules/fitumi/src"
+			},
+			"rbxts_include": {
+				"$path": "include",
+				"node_modules": {
+					"$path": "../node_modules/@rbxts"
+				}
+			},
+			"TestEZ": {
+				"$path": "modules/testez/src"
+			},
+			"Tests": {
+				"$path": "src"
+			},
+			"TS": {
+				"$path": "../out"
+			}
+		}
+    }
+}

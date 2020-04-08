@@ -1,0 +1,589 @@
+return function()
+    local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+	local fitumi = require(ReplicatedStorage:WaitForChild("fitumi"))
+    local TS = require(ReplicatedStorage:WaitForChild("rbxts_include"):WaitForChild("RuntimeLib"));
+	local JoysticksManager = TS.import(script, ReplicatedStorage, "TS", "Implementation", "JoysticksManager").JoysticksManager;
+
+	local a = fitumi.a
+
+	local createFakeInputObject = require(ReplicatedStorage.Tests.functions.createFakeInputObject)
+	local createFakeSignal = require(ReplicatedStorage.Tests.functions.createFakeSignal)
+	local createNoopSignal = require(ReplicatedStorage.Tests.functions.createNoopSignal)
+
+	local function instantiateJoystickFromConfig(config)
+		local joystick = a.fake()
+
+		joystick.activationRegion = config.activationRegion
+		joystick.isActive = false
+		joystick.isEnabled = config.initializedEnabled
+		joystick.isVisible = config.initializedVisible
+		joystick.priorityLevel = config.priorityLevel or 1
+
+		return joystick
+	end
+
+	local function getJoystickCreateConfigurations()
+		return {
+			{
+				activationRegion = a.fake(),
+				gutterRadiusInPixels = 10,
+				inactiveCenterPoint = Vector2.new(0, 0),
+				initializedEnabled = false,
+				initializedVisible = false,
+				renderer = a.fake(),
+				relativeThumbRadius = 0.5
+			},
+			{
+				activationRegion = a.fake(),
+				gutterRadiusInPixels = 10,
+				inactiveCenterPoint = Vector2.new(0, 0),
+				initializedEnabled = false,
+				initializedVisible = true,
+				renderer = a.fake(),
+				relativeThumbRadius = 0.5
+			},
+			{
+				activationRegion = a.fake(),
+				gutterRadiusInPixels = 10,
+				inactiveCenterPoint = Vector2.new(0, 0),
+				initializedEnabled = true,
+				initializedVisible = false,
+				renderer = a.fake(),
+				relativeThumbRadius = 0.5
+			},
+			{
+				activationRegion = a.fake(),
+				gutterRadiusInPixels = 10,
+				inactiveCenterPoint = Vector2.new(0, 0),
+				initializedEnabled = true,
+				initializedVisible = true,
+				renderer = a.fake(),
+				relativeThumbRadius = 0.5
+			}
+		}
+	end
+
+	describe("JoysticksManager", function()
+		it("should be constructable and fulfill its interface", function()
+			local screenGuisParent = Instance.new("Folder")
+			local userInputService = a.fake()
+
+			userInputService.TouchEnded = createNoopSignal()
+			userInputService.TouchMoved = createNoopSignal()
+			userInputService.TouchStarted = createNoopSignal()
+
+			local joysticksManager = nil
+			expect(function ()
+				joysticksManager = JoysticksManager.new(
+					a.fake,
+					screenGuisParent,
+					userInputService
+				)
+			end).never.to.throw()
+
+            expect(joysticksManager.createJoystick).to.be.a("function")
+            expect(joysticksManager.destroy).to.be.a("function")
+		end)
+
+		it("should be destroyable and all public methods should throw", function()
+			local screenGuisParent = Instance.new("Folder")
+			local userInputService = a.fake()
+
+			userInputService.TouchEnded = createNoopSignal()
+			userInputService.TouchMoved = createNoopSignal()
+			userInputService.TouchStarted = createNoopSignal()
+
+			local joysticksManager = JoysticksManager.new(
+				a.fake,
+				screenGuisParent,
+				userInputService
+			)
+
+			joysticksManager:destroy();
+
+			expect(function()
+				joysticksManager:createJoystick({
+					activationRegion = a.fake(),
+					gutterRadiusInPixels = 10,
+					inactiveCenterPoint = Vector2.new(0, 0),
+					initializedEnabled = true,
+					initializedVisible = true,
+					renderer = a.fake(),
+					relativeThumbRadius = 0.5
+				})
+			end).to.throw()
+		end)
+
+		it("should be destroyable and clean up all its signal connections and delete all its screen guis", function()
+			local screenGuisParent = Instance.new("Folder")
+			local userInputService = a.fake()
+
+			userInputService.TouchEnded = a.fake()
+			local touchEndedConnection = a.fake()
+			a.callTo(userInputService.TouchEnded["Connect"], userInputService.TouchEnded, fitumi.wildcard):returns(touchEndedConnection)
+
+			userInputService.TouchMoved = a.fake()
+			local touchMovedConnection = a.fake()
+			a.callTo(userInputService.TouchMoved["Connect"], userInputService.TouchMoved, fitumi.wildcard):returns(touchMovedConnection)
+
+			userInputService.TouchStarted = a.fake()
+			local touchStartedConnection = a.fake()
+			a.callTo(userInputService.TouchStarted["Connect"], userInputService.TouchStarted, fitumi.wildcard):returns(touchStartedConnection)
+
+			local joysticksManager = JoysticksManager.new(
+				a.fake,
+				screenGuisParent,
+				userInputService
+			)
+
+			joysticksManager:destroy()
+
+			expect(a.callTo(touchEndedConnection["Disconnect"], touchEndedConnection):didHappen()).to.equal(true)
+			expect(a.callTo(touchMovedConnection["Disconnect"], touchMovedConnection):didHappen()).to.equal(true)
+			expect(a.callTo(touchStartedConnection["Disconnect"], touchStartedConnection):didHappen()).to.equal(true)
+			expect(#screenGuisParent:GetChildren()).to.equal(0)
+		end)
+
+		it("should create joysticks", function()
+			local joystickInstantiator = function ()
+				local joystick = a.fake()
+				joystick.priorityLevel = 1
+				return joystick
+			end
+
+			local screenGuisParent = Instance.new("Folder")
+			local userInputService = a.fake()
+
+			userInputService.TouchEnded = createNoopSignal()
+			userInputService.TouchMoved = createNoopSignal()
+			userInputService.TouchStarted = createNoopSignal()
+
+			local joysticksManager = JoysticksManager.new(
+				joystickInstantiator,
+				screenGuisParent,
+				userInputService
+			)
+
+			local joystickConfigurations = getJoystickCreateConfigurations()
+			for i = 1, #joystickConfigurations do
+				expect(function()
+					joysticksManager:createJoystick(joystickConfigurations[i])
+				end).never.to.throw()
+			end
+		end)
+
+		it("should render joysticks when created", function()
+			local screenGuisParent = Instance.new("Folder")
+			local userInputService = a.fake()
+
+			userInputService.TouchEnded = createNoopSignal()
+			userInputService.TouchMoved = createNoopSignal()
+			userInputService.TouchStarted = createFakeSignal()
+
+			local joysticksManager = JoysticksManager.new(
+				instantiateJoystickFromConfig,
+				screenGuisParent,
+				userInputService
+			)
+
+			local activationRegion = a.fake()
+			a.callTo(activationRegion["isPointInRegion"], activationRegion, fitumi.wildcard):returns(true)
+
+			local joystick = joysticksManager:createJoystick({
+				activationRegion = activationRegion,
+				gutterRadiusInPixels = 10,
+				inactiveCenterPoint = Vector2.new(0, 0),
+				initializedEnabled = true,
+				initializedVisible = true,
+				renderer = a.fake(),
+				relativeThumbRadius = 0.5
+			})
+
+			expect(a.callTo(joystick["render"], joystick, fitumi.wildcard):didHappen()).to.equal(true)
+		end)
+
+		local function testSingleJoystickActivation(isEnabled, isVisible, expectedIsActiveValue)
+			local screenGuisParent = Instance.new("Folder")
+			local userInputService = a.fake()
+
+			userInputService.TouchEnded = createNoopSignal()
+			userInputService.TouchMoved = createNoopSignal()
+			userInputService.TouchStarted = createFakeSignal()
+
+			local joysticksManager = JoysticksManager.new(
+				instantiateJoystickFromConfig,
+				screenGuisParent,
+				userInputService
+			)
+
+			local activationRegion = a.fake()
+			a.callTo(activationRegion["isPointInRegion"], activationRegion, fitumi.wildcard):returns(true)
+
+			local joystick = joysticksManager:createJoystick({
+				activationRegion = activationRegion,
+				gutterRadiusInPixels = 10,
+				inactiveCenterPoint = Vector2.new(0, 0),
+				initializedEnabled = isEnabled,
+				initializedVisible = isVisible,
+				renderer = a.fake(),
+				relativeThumbRadius = 0.5
+			})
+
+
+			userInputService.TouchStarted:Fire(createFakeInputObject(), false)
+
+			if expectedIsActiveValue then
+				expect(a.callTo(joystick["activate"], joystick, fitumi.wildcard):didHappen()).to.equal(true)
+			else
+				expect(a.callTo(joystick["activate"], joystick, fitumi.wildcard):didNotHappen()).to.equal(true)
+			end
+		end
+
+		it("should activate the appropriate joystick when there is only one", function()
+			testSingleJoystickActivation(true, true, true)
+		end)
+
+		it("should activate an enabled but invisible joystick", function()
+			testSingleJoystickActivation(true, false, true)
+		end)
+
+		it("should not activate a disabled joystick", function()
+			testSingleJoystickActivation(false, true, false)
+		end)
+
+		it("should render joysticks when activated", function()
+			local screenGuisParent = Instance.new("Folder")
+			local userInputService = a.fake()
+
+			userInputService.TouchEnded = createNoopSignal()
+			userInputService.TouchMoved = createNoopSignal()
+			userInputService.TouchStarted = createFakeSignal()
+
+			local joysticksManager = JoysticksManager.new(
+				instantiateJoystickFromConfig,
+				screenGuisParent,
+				userInputService
+			)
+
+			local activationRegion = a.fake()
+			a.callTo(activationRegion["isPointInRegion"], activationRegion, fitumi.wildcard):returns(true)
+
+			local joystick = joysticksManager:createJoystick({
+				activationRegion = activationRegion,
+				gutterRadiusInPixels = 10,
+				inactiveCenterPoint = Vector2.new(0, 0),
+				initializedEnabled = true,
+				initializedVisible = true,
+				renderer = a.fake(),
+				relativeThumbRadius = 0.5
+			})
+
+			fitumi.clearCallHistory(joystick["render"])
+
+			userInputService.TouchStarted:Fire(createFakeInputObject(), false)
+
+			expect(a.callTo(joystick["activate"], joystick, fitumi.wildcard):didHappen()).to.equal(true)
+			expect(a.callTo(joystick["render"], joystick, fitumi.wildcard):didHappen()).to.equal(true)
+		end)
+
+		local function testTwoJoysticksActivation(shouldActivateJoystickConfig, shouldNotActivateJoystickConfig)
+			local screenGuisParent = Instance.new("Folder")
+			local userInputService = a.fake()
+
+			userInputService.TouchEnded = createNoopSignal()
+			userInputService.TouchMoved = createNoopSignal()
+			userInputService.TouchStarted = createFakeSignal()
+
+			local joysticksManager = JoysticksManager.new(
+				instantiateJoystickFromConfig,
+				screenGuisParent,
+				userInputService
+			)
+
+			local shouldActivateJoystick = joysticksManager:createJoystick(shouldActivateJoystickConfig)
+
+			local shouldNotActivateJoystick = joysticksManager:createJoystick(shouldNotActivateJoystickConfig)
+
+			userInputService.TouchStarted:Fire(createFakeInputObject(), false)
+
+			expect(a.callTo(shouldActivateJoystick["activate"], shouldActivateJoystick, fitumi.wildcard):didHappen()).to.equal(true)
+			expect(a.callTo(shouldNotActivateJoystick["activate"], shouldNotActivateJoystick, fitumi.wildcard):didNotHappen()).to.equal(true)
+		end
+
+		it("should activate only joysticks where the touch starts in the appropriate region", function()
+			local returnsTrueActivationRegion = a.fake()
+			a.callTo(returnsTrueActivationRegion["isPointInRegion"], returnsTrueActivationRegion, fitumi.wildcard):returns(true)
+
+			local returnsFalseActivationRegion = a.fake()
+			a.callTo(returnsFalseActivationRegion["isPointInRegion"], returnsFalseActivationRegion, fitumi.wildcard):returns(false)
+
+			local shouldActivateJoystickConfig = {
+				activationRegion = returnsTrueActivationRegion,
+				gutterRadiusInPixels = 10,
+				inactiveCenterPoint = Vector2.new(0, 0),
+				initializedEnabled = true,
+				initializedVisible = true,
+				renderer = a.fake(),
+				relativeThumbRadius = 0.5
+			}
+
+			local shouldNotActivateJoystickConfig = {
+				activationRegion = returnsFalseActivationRegion,
+				gutterRadiusInPixels = 10,
+				inactiveCenterPoint = Vector2.new(0, 0),
+				initializedEnabled = true,
+				initializedVisible = true,
+				renderer = a.fake(),
+				relativeThumbRadius = 0.5
+			}
+
+			testTwoJoysticksActivation(shouldActivateJoystickConfig, shouldNotActivateJoystickConfig)
+		end)
+
+		it("should activate only the highest priority joystick when a touch starts at an overlapping point", function()
+			local activationRegion = a.fake()
+			a.callTo(activationRegion["isPointInRegion"], activationRegion, fitumi.wildcard):returns(true)
+
+			local shouldActivateJoystickConfig = {
+				activationRegion = activationRegion,
+				gutterRadiusInPixels = 10,
+				inactiveCenterPoint = Vector2.new(0, 0),
+				initializedEnabled = true,
+				initializedVisible = true,
+				priorityLevel = 2,
+				renderer = a.fake(),
+				relativeThumbRadius = 0.5
+			}
+
+			local shouldNotActivateJoystickConfig = {
+				activationRegion = activationRegion,
+				gutterRadiusInPixels = 10,
+				inactiveCenterPoint = Vector2.new(0, 0),
+				initializedEnabled = true,
+				initializedVisible = true,
+				priorityLevel = 1,
+				renderer = a.fake(),
+				relativeThumbRadius = 0.5
+			}
+
+			testTwoJoysticksActivation(shouldActivateJoystickConfig, shouldNotActivateJoystickConfig)
+		end)
+
+		it("should not activate a disabled joystick with higher priority when a touch starts at an overlapping point", function()
+			local activationRegion = a.fake()
+			a.callTo(activationRegion["isPointInRegion"], activationRegion, fitumi.wildcard):returns(true)
+
+			local shouldActivateJoystickConfig = {
+				activationRegion = activationRegion,
+				gutterRadiusInPixels = 10,
+				inactiveCenterPoint = Vector2.new(0, 0),
+				initializedEnabled = true,
+				initializedVisible = true,
+				priorityLevel = 1,
+				renderer = a.fake(),
+				relativeThumbRadius = 0.5
+			}
+
+			local shouldNotActivateJoystickConfig = {
+				activationRegion = activationRegion,
+				gutterRadiusInPixels = 10,
+				inactiveCenterPoint = Vector2.new(0, 0),
+				initializedEnabled = false,
+				initializedVisible = true,
+				priorityLevel = 2,
+				renderer = a.fake(),
+				relativeThumbRadius = 0.5
+			}
+
+			testTwoJoysticksActivation(shouldActivateJoystickConfig, shouldNotActivateJoystickConfig)
+		end)
+
+		it("should update joystick inputs when their touches move", function()
+			local screenGuisParent = Instance.new("Folder")
+			local userInputService = a.fake()
+
+			userInputService.TouchEnded = createNoopSignal()
+			userInputService.TouchMoved = createFakeSignal()
+			userInputService.TouchStarted = createFakeSignal()
+
+			local joysticksManager = JoysticksManager.new(
+				instantiateJoystickFromConfig,
+				screenGuisParent,
+				userInputService
+			)
+
+			local activationRegion = a.fake()
+			a.callTo(activationRegion["isPointInRegion"], activationRegion, fitumi.wildcard):returns(true)
+
+			local joystick = joysticksManager:createJoystick({
+				activationRegion = activationRegion,
+				gutterRadiusInPixels = 10,
+				inactiveCenterPoint = Vector2.new(0, 0),
+				initializedEnabled = true,
+				initializedVisible = true,
+				renderer = a.fake(),
+				relativeThumbRadius = 0.5
+			})
+
+			local inputObject = createFakeInputObject()
+
+			userInputService.TouchStarted:Fire(inputObject, false)
+			joystick.isActive = true
+
+
+			userInputService.TouchMoved:Fire(inputObject)
+
+			expect(a.callTo(joystick["updateInput"], joystick, fitumi.wildcard):didHappen()).to.equal(true)
+		end)
+
+		it("should render joystick inputs when their touches move", function()
+			local screenGuisParent = Instance.new("Folder")
+			local userInputService = a.fake()
+
+			userInputService.TouchEnded = createNoopSignal()
+			userInputService.TouchMoved = createFakeSignal()
+			userInputService.TouchStarted = createFakeSignal()
+
+			local joysticksManager = JoysticksManager.new(
+				instantiateJoystickFromConfig,
+				screenGuisParent,
+				userInputService
+			)
+
+			local activationRegion = a.fake()
+			a.callTo(activationRegion["isPointInRegion"], activationRegion, fitumi.wildcard):returns(true)
+
+			local joystick = joysticksManager:createJoystick({
+				activationRegion = activationRegion,
+				gutterRadiusInPixels = 10,
+				inactiveCenterPoint = Vector2.new(0, 0),
+				initializedEnabled = true,
+				initializedVisible = true,
+				renderer = a.fake(),
+				relativeThumbRadius = 0.5
+			})
+
+			local inputObject = createFakeInputObject()
+
+			userInputService.TouchStarted:Fire(inputObject, false)
+			joystick.isActive = true
+
+			fitumi.clearCallHistory(joystick["render"])
+
+			userInputService.TouchMoved:Fire(inputObject)
+
+			expect(a.callTo(joystick["render"], joystick, fitumi.wildcard):didHappen()).to.equal(true)
+		end)
+
+		it("should deactivate joysticks when their touches end", function()
+			local screenGuisParent = Instance.new("Folder")
+			local userInputService = a.fake()
+
+			userInputService.TouchEnded = createFakeSignal()
+			userInputService.TouchMoved = createNoopSignal()
+			userInputService.TouchStarted = createFakeSignal()
+
+			local joysticksManager = JoysticksManager.new(
+				instantiateJoystickFromConfig,
+				screenGuisParent,
+				userInputService
+			)
+
+			local activationRegion = a.fake()
+			a.callTo(activationRegion["isPointInRegion"], activationRegion, fitumi.wildcard):returns(true)
+
+			local joystick = joysticksManager:createJoystick({
+				activationRegion = activationRegion,
+				gutterRadiusInPixels = 10,
+				inactiveCenterPoint = Vector2.new(0, 0),
+				initializedEnabled = true,
+				initializedVisible = true,
+				renderer = a.fake(),
+				relativeThumbRadius = 0.5
+			})
+
+			local inputObject = createFakeInputObject()
+
+			userInputService.TouchStarted:Fire(inputObject, false)
+			joystick.isActive = true
+
+			userInputService.TouchEnded:Fire(inputObject)
+
+			expect(a.callTo(joystick["deactivate"], joystick):didHappen()).to.equal(true)
+		end)
+
+		it("should render joysticks when their touches end", function()
+			local screenGuisParent = Instance.new("Folder")
+			local userInputService = a.fake()
+
+			userInputService.TouchEnded = createFakeSignal()
+			userInputService.TouchMoved = createNoopSignal()
+			userInputService.TouchStarted = createFakeSignal()
+
+			local joysticksManager = JoysticksManager.new(
+				instantiateJoystickFromConfig,
+				screenGuisParent,
+				userInputService
+			)
+
+			local activationRegion = a.fake()
+			a.callTo(activationRegion["isPointInRegion"], activationRegion, fitumi.wildcard):returns(true)
+
+			local joystick = joysticksManager:createJoystick({
+				activationRegion = activationRegion,
+				gutterRadiusInPixels = 10,
+				inactiveCenterPoint = Vector2.new(0, 0),
+				initializedEnabled = true,
+				initializedVisible = true,
+				renderer = a.fake(),
+				relativeThumbRadius = 0.5
+			})
+
+			local inputObject = createFakeInputObject()
+
+			userInputService.TouchStarted:Fire(inputObject, false)
+			joystick.isActive = true
+
+			fitumi.clearCallHistory(joystick["render"])
+
+			userInputService.TouchEnded:Fire(inputObject)
+
+			expect(a.callTo(joystick["render"], joystick, fitumi.wildcard):didHappen()).to.equal(true)
+		end)
+
+		it("should render joysticks when they request a render", function()
+			local screenGuisParent = Instance.new("Folder")
+			local userInputService = a.fake()
+
+			userInputService.TouchEnded = createNoopSignal()
+			userInputService.TouchMoved = createNoopSignal()
+			userInputService.TouchStarted = createNoopSignal()
+
+			local joysticksManager = JoysticksManager.new(
+				instantiateJoystickFromConfig,
+				screenGuisParent,
+				userInputService
+			)
+
+			local joystick = joysticksManager:createJoystick({
+				activationRegion = a.fake(),
+				gutterRadiusInPixels = 10,
+				inactiveCenterPoint = Vector2.new(0, 0),
+				initializedEnabled = true,
+				initializedVisible = true,
+				renderer = a.fake(),
+				relativeThumbRadius = 0.5
+			})
+
+			fitumi.clearCallHistory(joystick["render"])
+
+			joysticksManager:requestRender(joystick)
+
+			wait()
+			wait()
+
+			expect(a.callTo(joystick["render"], joystick, fitumi.wildcard):didHappen()).to.equal(true)
+		end)
+    end)
+end

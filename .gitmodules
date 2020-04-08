@@ -1,0 +1,7 @@
+[submodule "tests/modules/testez"]
+	path = tests/modules/testez
+	url = https://github.com/Roblox/testez.git
+	branch = master
+[submodule "tests/modules/fitumi"]
+	path = tests/modules/fitumi
+	url = https://github.com/Bytebit-Org/fitumi.git
