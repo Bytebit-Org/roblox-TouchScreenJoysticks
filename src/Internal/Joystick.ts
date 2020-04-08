@@ -5,6 +5,7 @@ import { IGuiWindowRegion } from "../Interfaces/IGuiWindowRegion";
 import { IJoystickRenderer } from "../Interfaces/IJoystickRenderer";
 import { Dumpster } from "@rbxts/dumpster";
 import { JoysticksManager } from "../Implementation/JoysticksManager";
+import { IJoystickInputCalculator } from "../Interfaces/IJoystickInputCalculator";
 
 export class Joystick implements IJoystick {
 	// Public instance members
@@ -28,7 +29,6 @@ export class Joystick implements IJoystick {
 	// Private instance members
 	private gutterCenterPoint: Vector2;
 	private gutterRadiusInPixels: number;
-	private joysticksManager: JoysticksManager;
 	private inactiveCenterPoint: Vector2;
 	private isDestroyed = false;
 	private relativeThumbRadius: number;
@@ -38,13 +38,16 @@ export class Joystick implements IJoystick {
 	// Dependencies
 	private readonly currentCameraGetter: () => Camera | undefined;
 	private readonly guiService: GuiService;
+	private readonly joysticksManager: JoysticksManager;
+	private readonly joystickInputCalculator: IJoystickInputCalculator;
 
 	/** Meant for internal-use only! */
 	public constructor(
 		configuration: IJoystickConfiguration,
-		joysticksManager: JoysticksManager,
 		currentCameraGetter: () => Camera | undefined,
 		guiService: GuiService,
+		joystickInputCalculator: IJoystickInputCalculator,
+		joysticksManager: JoysticksManager,
 	) {
 		// Initialize public instance members
 		this.isActive = false;
@@ -69,12 +72,13 @@ export class Joystick implements IJoystick {
 		this.renderer = configuration.renderer;
 
 		// Initialize other private members
-		this.joysticksManager = joysticksManager;
 		this.signalsDumpster = new Dumpster();
 
 		// Fill in dependencies
 		this.currentCameraGetter = currentCameraGetter;
 		this.guiService = guiService;
+		this.joysticksManager = joysticksManager;
+		this.joystickInputCalculator = joystickInputCalculator;
 
 		// Dump things
 		this.signalsDumpster.dump(this.activated, signal => signal.disconnectAll());
@@ -144,6 +148,7 @@ export class Joystick implements IJoystick {
 		this.inactiveCenterPoint = newPoint;
 
 		if (!this.isActive) {
+			this.gutterCenterPoint = newPoint;
 			this.joysticksManager.requestRender(this);
 		}
 	}
@@ -228,7 +233,12 @@ export class Joystick implements IJoystick {
 
 		this.gutterCenterPoint = newGutterCenter;
 
-		const initialInput = this.calculateInput(inputPoint);
+		const initialInput = this.joystickInputCalculator.calculate(
+			this.gutterCenterPoint,
+			this.gutterRadiusInPixels,
+			this.relativeThumbRadius,
+			inputPoint,
+		);
 
 		this.input = initialInput;
 		this.isActive = true;
@@ -281,31 +291,18 @@ export class Joystick implements IJoystick {
 			throw `Cannot update an inactive instance's input`;
 		}
 
-		const newInput = this.calculateInput(inputPoint);
+		const newInput = this.joystickInputCalculator.calculate(
+			this.gutterCenterPoint,
+			this.gutterRadiusInPixels,
+			this.relativeThumbRadius,
+			inputPoint,
+		);
 
 		this.input = newInput;
 		this.inputChanged.fire(newInput);
 	}
 
 	// Private instance methods
-	private calculateEffectiveGutterRadius(): number {
-		return this.gutterRadiusInPixels * (1 - this.relativeThumbRadius);
-	}
-
-	private calculateInput(inputPoint: Vector2): Vector2 {
-		const effectiveGutterRadius = this.calculateEffectiveGutterRadius();
-		const inputDisplacementFromGutterCenter = inputPoint.sub(this.gutterCenterPoint);
-
-		let newInput = new Vector2();
-		if (inputDisplacementFromGutterCenter.Magnitude > 0) {
-			newInput = inputDisplacementFromGutterCenter.Unit.mul(
-				math.clamp(inputDisplacementFromGutterCenter.Magnitude / effectiveGutterRadius, -1, 1),
-			);
-		}
-
-		return newInput;
-	}
-
 	private getGuiWindowSize(): Vector2 {
 		const currentCamera = this.currentCameraGetter();
 		if (currentCamera === undefined) {

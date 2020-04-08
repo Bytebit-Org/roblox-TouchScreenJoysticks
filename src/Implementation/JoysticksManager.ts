@@ -4,6 +4,8 @@ import { IJoysticksManager } from "../Interfaces/IJoysticksManager";
 import { IJoystickConfiguration } from "../Interfaces/IJoystickConfiguration";
 import { IJoystick } from "../Interfaces/IJoystick";
 import { Dumpster } from "@rbxts/dumpster";
+import { IJoystickInputCalculator } from "../Interfaces/IJoystickInputCalculator";
+import { JoystickInputCalculator } from "../Internal/JoystickInputCalculator";
 
 export class JoysticksManager implements IJoysticksManager {
 	/** A sorted array of the registered joysticks in ascending order of priority */
@@ -20,32 +22,19 @@ export class JoysticksManager implements IJoysticksManager {
 	private isDestroyed = false;
 
 	// Dependencies
-	private readonly currentCameraGetter: () => Camera | undefined;
-	private readonly guiService: GuiService;
 	private readonly joystickInstantiator: (
 		configuration: IJoystickConfiguration,
 		joysticksManager: JoysticksManager,
-		currentCameraGetter: () => Camera | undefined,
-		guiService: GuiService,
 	) => Joystick;
 	private readonly screenGuiParent: Instance;
 	private readonly userInputService: UserInputService;
 
 	/** Use the create method instead! */
 	private constructor(
-		currentCameraGetter: () => Camera | undefined,
-		guiService: GuiService,
-		joystickInstantiator: (
-			configuration: IJoystickConfiguration,
-			joysticksManager: JoysticksManager,
-			currentCameraGetter: () => Camera | undefined,
-			guiService: GuiService,
-		) => Joystick,
+		joystickInstantiator: (configuration: IJoystickConfiguration, joysticksManager: JoysticksManager) => Joystick,
 		screenGuiParent: Instance,
 		userInputService: UserInputService,
 	) {
-		this.currentCameraGetter = currentCameraGetter;
-		this.guiService = guiService;
 		this.joystickInstantiator = joystickInstantiator;
 		this.screenGuiParent = screenGuiParent;
 		this.userInputService = userInputService;
@@ -71,10 +60,14 @@ export class JoysticksManager implements IJoysticksManager {
 	public static create(): IJoysticksManager {
 		const playerGui = Players.LocalPlayer.WaitForChild("PlayerGui");
 		return new JoysticksManager(
-			() => Workspace.CurrentCamera,
-			GuiService,
-			(joystickConfiguration, joysticksManager, currentCameraGetter, guiService) =>
-				new Joystick(joystickConfiguration, joysticksManager, currentCameraGetter, guiService),
+			(joystickConfiguration, joysticksManager) =>
+				new Joystick(
+					joystickConfiguration,
+					() => Workspace.CurrentCamera,
+					GuiService,
+					new JoystickInputCalculator(),
+					joysticksManager,
+				),
 			playerGui,
 			UserInputService,
 		);
@@ -87,12 +80,7 @@ export class JoysticksManager implements IJoysticksManager {
 			throw `Instance is destroyed`;
 		}
 
-		const newJoystick = this.joystickInstantiator(
-			joystickConfiguration,
-			this,
-			this.currentCameraGetter,
-			this.guiService,
-		);
+		const newJoystick = this.joystickInstantiator(joystickConfiguration, this);
 
 		this.registerJoystick(newJoystick);
 

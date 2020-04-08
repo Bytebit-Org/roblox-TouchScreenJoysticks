@@ -66,15 +66,6 @@ return function()
 
 	describe("JoysticksManager", function()
 		it("should be constructable and fulfill its interface", function()
-			local currentCameraGetter = function ()
-				return a.fake()
-			end
-
-			local joystickInstantiator = function ()
-				return a.fake()
-			end
-
-			local guiService = a.fake()
 			local screenGuisParent = Instance.new("Folder")
 			local userInputService = a.fake()
 
@@ -85,9 +76,7 @@ return function()
 			local joysticksManager = nil
 			expect(function ()
 				joysticksManager = JoysticksManager.new(
-					currentCameraGetter,
-					guiService,
-					joystickInstantiator,
+					a.fake,
 					screenGuisParent,
 					userInputService
 				)
@@ -98,15 +87,6 @@ return function()
 		end)
 
 		it("should be destroyable and all public methods should throw", function()
-			local currentCameraGetter = function ()
-				return a.fake()
-			end
-
-			local joystickInstantiator = function ()
-				return a.fake()
-			end
-
-			local guiService = a.fake()
 			local screenGuisParent = Instance.new("Folder")
 			local userInputService = a.fake()
 
@@ -115,9 +95,7 @@ return function()
 			userInputService.TouchStarted = createNoopSignal()
 
 			local joysticksManager = JoysticksManager.new(
-				currentCameraGetter,
-				guiService,
-				joystickInstantiator,
+				a.fake,
 				screenGuisParent,
 				userInputService
 			)
@@ -138,15 +116,6 @@ return function()
 		end)
 
 		it("should be destroyable and clean up all its signal connections and delete all its screen guis", function()
-			local currentCameraGetter = function ()
-				return a.fake()
-			end
-
-			local joystickInstantiator = function ()
-				return a.fake()
-			end
-
-			local guiService = a.fake()
 			local screenGuisParent = Instance.new("Folder")
 			local userInputService = a.fake()
 
@@ -163,9 +132,7 @@ return function()
 			a.callTo(userInputService.TouchStarted["Connect"], userInputService.TouchStarted, fitumi.wildcard):returns(touchStartedConnection)
 
 			local joysticksManager = JoysticksManager.new(
-				currentCameraGetter,
-				guiService,
-				joystickInstantiator,
+				a.fake,
 				screenGuisParent,
 				userInputService
 			)
@@ -179,17 +146,12 @@ return function()
 		end)
 
 		it("should create joysticks", function()
-			local currentCameraGetter = function ()
-				return a.fake()
-			end
-
 			local joystickInstantiator = function ()
 				local joystick = a.fake()
 				joystick.priorityLevel = 1
 				return joystick
 			end
 
-			local guiService = a.fake()
 			local screenGuisParent = Instance.new("Folder")
 			local userInputService = a.fake()
 
@@ -198,8 +160,6 @@ return function()
 			userInputService.TouchStarted = createNoopSignal()
 
 			local joysticksManager = JoysticksManager.new(
-				currentCameraGetter,
-				guiService,
 				joystickInstantiator,
 				screenGuisParent,
 				userInputService
@@ -214,16 +174,6 @@ return function()
 		end)
 
 		it("should render joysticks when created", function()
-			local currentCameraGetter = function ()
-				return a.fake()
-			end
-
-			local joystickInstantiator = function(config)
-				local joystick = instantiateJoystickFromConfig(config)
-				return joystick
-			end
-
-			local guiService = a.fake()
 			local screenGuisParent = Instance.new("Folder")
 			local userInputService = a.fake()
 
@@ -232,9 +182,7 @@ return function()
 			userInputService.TouchStarted = createFakeSignal()
 
 			local joysticksManager = JoysticksManager.new(
-				currentCameraGetter,
-				guiService,
-				joystickInstantiator,
+				instantiateJoystickFromConfig,
 				screenGuisParent,
 				userInputService
 			)
@@ -256,11 +204,6 @@ return function()
 		end)
 
 		local function testSingleJoystickActivation(isEnabled, isVisible, expectedIsActiveValue)
-			local currentCameraGetter = function ()
-				return a.fake()
-			end
-
-			local guiService = a.fake()
 			local screenGuisParent = Instance.new("Folder")
 			local userInputService = a.fake()
 
@@ -269,8 +212,6 @@ return function()
 			userInputService.TouchStarted = createFakeSignal()
 
 			local joysticksManager = JoysticksManager.new(
-				currentCameraGetter,
-				guiService,
 				instantiateJoystickFromConfig,
 				screenGuisParent,
 				userInputService
@@ -312,11 +253,6 @@ return function()
 		end)
 
 		it("should render joysticks when activated", function()
-			local currentCameraGetter = function ()
-				return a.fake()
-			end
-
-			local guiService = a.fake()
 			local screenGuisParent = Instance.new("Folder")
 			local userInputService = a.fake()
 
@@ -325,8 +261,6 @@ return function()
 			userInputService.TouchStarted = createFakeSignal()
 
 			local joysticksManager = JoysticksManager.new(
-				currentCameraGetter,
-				guiService,
 				instantiateJoystickFromConfig,
 				screenGuisParent,
 				userInputService
@@ -354,11 +288,6 @@ return function()
 		end)
 
 		local function testTwoJoysticksActivation(shouldActivateJoystickConfig, shouldNotActivateJoystickConfig)
-			local currentCameraGetter = function ()
-				return a.fake()
-			end
-
-			local guiService = a.fake()
 			local screenGuisParent = Instance.new("Folder")
 			local userInputService = a.fake()
 
@@ -367,8 +296,6 @@ return function()
 			userInputService.TouchStarted = createFakeSignal()
 
 			local joysticksManager = JoysticksManager.new(
-				currentCameraGetter,
-				guiService,
 				instantiateJoystickFromConfig,
 				screenGuisParent,
 				userInputService
@@ -473,11 +400,6 @@ return function()
 		end)
 
 		it("should update joystick inputs when their touches move", function()
-			local currentCameraGetter = function ()
-				return a.fake()
-			end
-
-			local guiService = a.fake()
 			local screenGuisParent = Instance.new("Folder")
 			local userInputService = a.fake()
 
@@ -486,8 +408,6 @@ return function()
 			userInputService.TouchStarted = createFakeSignal()
 
 			local joysticksManager = JoysticksManager.new(
-				currentCameraGetter,
-				guiService,
 				instantiateJoystickFromConfig,
 				screenGuisParent,
 				userInputService
@@ -518,11 +438,6 @@ return function()
 		end)
 
 		it("should render joystick inputs when their touches move", function()
-			local currentCameraGetter = function ()
-				return a.fake()
-			end
-
-			local guiService = a.fake()
 			local screenGuisParent = Instance.new("Folder")
 			local userInputService = a.fake()
 
@@ -531,8 +446,6 @@ return function()
 			userInputService.TouchStarted = createFakeSignal()
 
 			local joysticksManager = JoysticksManager.new(
-				currentCameraGetter,
-				guiService,
 				instantiateJoystickFromConfig,
 				screenGuisParent,
 				userInputService
@@ -564,11 +477,6 @@ return function()
 		end)
 
 		it("should deactivate joysticks when their touches end", function()
-			local currentCameraGetter = function ()
-				return a.fake()
-			end
-
-			local guiService = a.fake()
 			local screenGuisParent = Instance.new("Folder")
 			local userInputService = a.fake()
 
@@ -577,8 +485,6 @@ return function()
 			userInputService.TouchStarted = createFakeSignal()
 
 			local joysticksManager = JoysticksManager.new(
-				currentCameraGetter,
-				guiService,
 				instantiateJoystickFromConfig,
 				screenGuisParent,
 				userInputService
@@ -608,11 +514,6 @@ return function()
 		end)
 
 		it("should render joysticks when their touches end", function()
-			local currentCameraGetter = function ()
-				return a.fake()
-			end
-
-			local guiService = a.fake()
 			local screenGuisParent = Instance.new("Folder")
 			local userInputService = a.fake()
 
@@ -621,8 +522,6 @@ return function()
 			userInputService.TouchStarted = createFakeSignal()
 
 			local joysticksManager = JoysticksManager.new(
-				currentCameraGetter,
-				guiService,
 				instantiateJoystickFromConfig,
 				screenGuisParent,
 				userInputService
@@ -654,11 +553,6 @@ return function()
 		end)
 
 		it("should render joysticks when they request a render", function()
-			local currentCameraGetter = function ()
-				return a.fake()
-			end
-
-			local guiService = a.fake()
 			local screenGuisParent = Instance.new("Folder")
 			local userInputService = a.fake()
 
@@ -667,8 +561,6 @@ return function()
 			userInputService.TouchStarted = createNoopSignal()
 
 			local joysticksManager = JoysticksManager.new(
-				currentCameraGetter,
-				guiService,
 				instantiateJoystickFromConfig,
 				screenGuisParent,
 				userInputService
