@@ -265,15 +265,17 @@ return function()
 				--[[ joysticksManager ]] joysticksManager
 			)
 
-			local newValue = math.floor(math.random() * 10) + 1
-			joystick:setGutterRadiusInPixels(newValue)
+			for _ = 1, 30 do
+				local newValue = math.floor(math.random() * 10) + 1
+				joystick:setGutterRadiusInPixels(newValue)
 
-			expect(joystick.gutterRadiusInPixels).to.equal(newValue)
-			expect(a.callTo(
-				joysticksManager["requestRender"],
-				joysticksManager,
-				joystick
-			):didHappen()).to.equal(true)
+				expect(joystick.gutterRadiusInPixels).to.equal(newValue)
+				expect(a.callTo(
+					joysticksManager["requestRender"],
+					joysticksManager,
+					joystick
+				):didHappen()).to.equal(true)
+			end
 		end)
 
 		it("should change its inactive center point and gutter center point and request a render", function()
@@ -295,16 +297,18 @@ return function()
 				--[[ joysticksManager ]] joysticksManager
 			)
 
-			local newValue = Vector2.new(math.random(), math.random())
-			joystick:setInactiveCenterPoint(newValue)
+			for _ = 1, 30 do
+				local newValue = Vector2.new(math.random(), math.random())
+				joystick:setInactiveCenterPoint(newValue)
 
-			expect(joystick.inactiveCenterPoint).to.equal(newValue)
-			expect(joystick.gutterCenterPoint).to.equal(newValue)
-			expect(a.callTo(
-				joysticksManager["requestRender"],
-				joysticksManager,
-				joystick
-			):didHappen()).to.equal(true)
+				expect(joystick.inactiveCenterPoint).to.equal(newValue)
+				expect(joystick.gutterCenterPoint).to.equal(newValue)
+				expect(a.callTo(
+					joysticksManager["requestRender"],
+					joysticksManager,
+					joystick
+				):didHappen()).to.equal(true)
+			end
 		end)
 
 		it("should change its priority level and request a render", function()
@@ -441,49 +445,51 @@ return function()
 			local guiService = a.fake()
 			a.callTo(guiService["GetGuiInset"], guiService):returns(Vector2.new(), Vector2.new())
 
-			local inputPoint = Vector2.new(math.random(), math.random())
+			for _ = 1, 30 do
+				local inputPoint = Vector2.new(math.random(), math.random())
 
-			local joystickInputCalculator = a.fake()
-			local expectedInput = Vector2.new(math.random(), math.random())
-			a.callTo(
-				joystickInputCalculator["calculate"],
-				joystickInputCalculator,
-				fitumi.wildcard,
-				fitumi.wildcard,
-				fitumi.wildcard,
-				inputPoint):returns(expectedInput)
+				local joystickInputCalculator = a.fake()
+				local expectedInput = Vector2.new(math.random(), math.random())
+				a.callTo(
+					joystickInputCalculator["calculate"],
+					joystickInputCalculator,
+					fitumi.wildcard,
+					fitumi.wildcard,
+					fitumi.wildcard,
+					inputPoint):returns(expectedInput)
 
-			local joystick = Joystick.new(
-				{
-					activationRegion = a.fake(),
-					gutterRadiusInPixels = 10,
-					inactiveCenterPoint = Vector2.new(0, 0),
-					initializedEnabled = true,
-					initializedVisible = true,
-					relativeThumbRadius = 0.5,
-					renderer = a.fake()
-				},
-				--[[ currentCameraGetter ]] currentCameraGetter,
-				--[[ guiService ]] guiService,
-				--[[ joystickInputCalculator ]] joystickInputCalculator,
-				--[[ joysticksManager ]] a.fake()
-			)
+				local joystick = Joystick.new(
+					{
+						activationRegion = a.fake(),
+						gutterRadiusInPixels = 10,
+						inactiveCenterPoint = Vector2.new(0, 0),
+						initializedEnabled = true,
+						initializedVisible = true,
+						relativeThumbRadius = 0.5,
+						renderer = a.fake()
+					},
+					--[[ currentCameraGetter ]] currentCameraGetter,
+					--[[ guiService ]] guiService,
+					--[[ joystickInputCalculator ]] joystickInputCalculator,
+					--[[ joysticksManager ]] a.fake()
+				)
 
-			local wasActivatedFired = false
+				local wasActivatedFired = false
 
-			joystick.activated:Connect(function()
-				wasActivatedFired = true
-			end)
+				joystick.activated:Connect(function()
+					wasActivatedFired = true
+				end)
 
-			joystick:activate(inputPoint)
+				joystick:activate(inputPoint)
 
-			wait()
+				wait()
 
-			expect(joystick.isActive).to.equal(true)
-			expect(joystick.input).to.be.ok()
-			expect(joystick.input.X).to.be.near(expectedInput.X, 1 / 128)
-			expect(joystick.input.Y).to.be.near(expectedInput.Y, 1 / 128)
-			expect(wasActivatedFired).to.equal(true)
+				expect(joystick.isActive).to.equal(true)
+				expect(joystick.input).to.be.ok()
+				expect(joystick.input.X).to.be.near(expectedInput.X, 1 / 128)
+				expect(joystick.input.Y).to.be.near(expectedInput.Y, 1 / 128)
+				expect(wasActivatedFired).to.equal(true)
+			end
 		end)
 
 		it("should not fire activated when activate is called on an already activated joystick", function()
@@ -537,53 +543,55 @@ return function()
 			local guiService = a.fake()
 			a.callTo(guiService["GetGuiInset"], guiService):returns(Vector2.new(), Vector2.new())
 
-			local inputPoint = Vector2.new(math.random(), math.random())
+			for _ = 1, 30 do
+				local inputPoint = Vector2.new(math.random(), math.random())
 
-			local joystickInputCalculator = a.fake()
-			local expectedInput = Vector2.new(math.random(), math.random())
-			a.callTo(
-				joystickInputCalculator["calculate"],
-				joystickInputCalculator,
-				fitumi.wildcard,
-				fitumi.wildcard,
-				fitumi.wildcard,
-				inputPoint):returns(expectedInput)
+				local joystickInputCalculator = a.fake()
+				local expectedInput = Vector2.new(math.random(), math.random())
+				a.callTo(
+					joystickInputCalculator["calculate"],
+					joystickInputCalculator,
+					fitumi.wildcard,
+					fitumi.wildcard,
+					fitumi.wildcard,
+					inputPoint):returns(expectedInput)
 
-			local joystick = Joystick.new(
-				{
-					activationRegion = a.fake(),
-					gutterRadiusInPixels = 10,
-					inactiveCenterPoint = Vector2.new(0, 0),
-					initializedEnabled = true,
-					initializedVisible = true,
-					relativeThumbRadius = 0.5,
-					renderer = a.fake()
-				},
-				--[[ currentCameraGetter ]] currentCameraGetter,
-				--[[ guiService ]] guiService,
-				--[[ joystickInputCalculator ]] joystickInputCalculator,
-				--[[ joysticksManager ]] a.fake()
-			)
+				local joystick = Joystick.new(
+					{
+						activationRegion = a.fake(),
+						gutterRadiusInPixels = 10,
+						inactiveCenterPoint = Vector2.new(0, 0),
+						initializedEnabled = true,
+						initializedVisible = true,
+						relativeThumbRadius = 0.5,
+						renderer = a.fake()
+					},
+					--[[ currentCameraGetter ]] currentCameraGetter,
+					--[[ guiService ]] guiService,
+					--[[ joystickInputCalculator ]] joystickInputCalculator,
+					--[[ joysticksManager ]] a.fake()
+				)
 
-			joystick:activate(inputPoint)
+				joystick:activate(inputPoint)
 
-			local wasDeactivatedFired = false
-			local reportedFinalInput = nil
+				local wasDeactivatedFired = false
+				local reportedFinalInput = nil
 
-			joystick.deactivated:Connect(function(finalInput)
-				wasDeactivatedFired = true
-				reportedFinalInput = finalInput
-			end)
+				joystick.deactivated:Connect(function(finalInput)
+					wasDeactivatedFired = true
+					reportedFinalInput = finalInput
+				end)
 
-			joystick:deactivate()
+				joystick:deactivate()
 
-			wait()
+				wait()
 
-			expect(joystick.isActive).to.equal(false)
-			expect(joystick.input).never.to.be.ok()
-			expect(wasDeactivatedFired).to.equal(true)
-			expect(reportedFinalInput.X).to.be.near(expectedInput.X, 1 / 128)
-			expect(reportedFinalInput.Y).to.be.near(expectedInput.Y, 1 / 128)
+				expect(joystick.isActive).to.equal(false)
+				expect(joystick.input).never.to.be.ok()
+				expect(wasDeactivatedFired).to.equal(true)
+				expect(reportedFinalInput.X).to.be.near(expectedInput.X, 1 / 128)
+				expect(reportedFinalInput.Y).to.be.near(expectedInput.Y, 1 / 128)
+			end
 		end)
 
 		it("should not fire deactivated when deactivate is called on an already inactive joystick", function()
@@ -728,49 +736,51 @@ return function()
 			local guiService = a.fake()
 			a.callTo(guiService["GetGuiInset"], guiService):returns(Vector2.new(), Vector2.new())
 
-			local joystickInputCalculator = a.fake()
-			local expectedInput = Vector2.new(math.random(), math.random())
-			a.callTo(
-				joystickInputCalculator["calculate"],
-				joystickInputCalculator,
-				fitumi.wildcard,
-				fitumi.wildcard,
-				fitumi.wildcard,
-				fitumi.wildcard):returns(expectedInput)
+			for _ = 1, 30 do
+				local joystickInputCalculator = a.fake()
+				local expectedInput = Vector2.new(math.random(), math.random())
+				a.callTo(
+					joystickInputCalculator["calculate"],
+					joystickInputCalculator,
+					fitumi.wildcard,
+					fitumi.wildcard,
+					fitumi.wildcard,
+					fitumi.wildcard):returns(expectedInput)
 
-			local renderer = a.fake()
+				local renderer = a.fake()
 
-			local providedRelativeThumbPosition = nil
-			renderer.render = function(self, _, relativeThumbPosition)
-				providedRelativeThumbPosition = relativeThumbPosition
+				local providedRelativeThumbPosition = nil
+				renderer.render = function(self, _, relativeThumbPosition)
+					providedRelativeThumbPosition = relativeThumbPosition
+				end
+
+				local configuration = {
+					activationRegion = a.fake(),
+					gutterRadiusInPixels = 10,
+					inactiveCenterPoint = Vector2.new(0, 0),
+					initializedEnabled = true,
+					initializedVisible = true,
+					priorityLevel = 1,
+					relativeThumbRadius = 0,
+					renderer = renderer
+				}
+
+				local joystick = Joystick.new(
+					--[[ configuration ]] configuration,
+					--[[ currentCameraGetter ]] currentCameraGetter,
+					--[[ guiService ]] guiService,
+					--[[ joystickInputCalculator ]] joystickInputCalculator,
+					--[[ joysticksManager ]] a.fake()
+				)
+
+				joystick:activate(Vector2.new())
+
+				joystick:render(a.fake())
+
+				expect(providedRelativeThumbPosition).to.be.ok()
+				expect(providedRelativeThumbPosition.X).to.be.near(expectedInput.X, 1 / 128)
+				expect(providedRelativeThumbPosition.Y).to.be.near(expectedInput.Y, 1 / 128)
 			end
-
-			local configuration = {
-				activationRegion = a.fake(),
-				gutterRadiusInPixels = 10,
-				inactiveCenterPoint = Vector2.new(0, 0),
-				initializedEnabled = true,
-				initializedVisible = true,
-				priorityLevel = 1,
-				relativeThumbRadius = 0,
-				renderer = renderer
-			}
-
-			local joystick = Joystick.new(
-				--[[ configuration ]] configuration,
-				--[[ currentCameraGetter ]] currentCameraGetter,
-				--[[ guiService ]] guiService,
-				--[[ joystickInputCalculator ]] joystickInputCalculator,
-				--[[ joysticksManager ]] a.fake()
-			)
-
-			joystick:activate(Vector2.new())
-
-			joystick:render(a.fake())
-
-			expect(providedRelativeThumbPosition).to.be.ok()
-			expect(providedRelativeThumbPosition.X).to.be.near(expectedInput.X, 1 / 128)
-			expect(providedRelativeThumbPosition.Y).to.be.near(expectedInput.Y, 1 / 128)
 		end)
 
 		it("should update input appopriately and fire inputChanged with the expected new input when active", function()
@@ -783,63 +793,65 @@ return function()
 			local guiService = a.fake()
 			a.callTo(guiService["GetGuiInset"], guiService):returns(Vector2.new(), Vector2.new())
 
-			local initialInputPoint = Vector2.new(math.random(), math.random())
+			for _ = 1, 30 do
+				local initialInputPoint = Vector2.new(math.random(), math.random())
 
-			local joystickInputCalculator = a.fake()
-			a.callTo(
-				joystickInputCalculator["calculate"],
-				joystickInputCalculator,
-				fitumi.wildcard,
-				fitumi.wildcard,
-				fitumi.wildcard,
-				initialInputPoint):returns(Vector2.new())
+				local joystickInputCalculator = a.fake()
+				a.callTo(
+					joystickInputCalculator["calculate"],
+					joystickInputCalculator,
+					fitumi.wildcard,
+					fitumi.wildcard,
+					fitumi.wildcard,
+					initialInputPoint):returns(Vector2.new())
 
-			local updatedInputPoint = Vector2.new(math.random(), math.random())
-			local expectedUpdatedInput = Vector2.new(math.random(), math.random())
-			a.callTo(
-				joystickInputCalculator["calculate"],
-				joystickInputCalculator,
-				fitumi.wildcard,
-				fitumi.wildcard,
-				fitumi.wildcard,
-				updatedInputPoint):returns(expectedUpdatedInput)
+				local updatedInputPoint = Vector2.new(math.random(), math.random())
+				local expectedUpdatedInput = Vector2.new(math.random(), math.random())
+				a.callTo(
+					joystickInputCalculator["calculate"],
+					joystickInputCalculator,
+					fitumi.wildcard,
+					fitumi.wildcard,
+					fitumi.wildcard,
+					updatedInputPoint):returns(expectedUpdatedInput)
 
-			local joystick = Joystick.new(
-				{
-					activationRegion = a.fake(),
-					gutterRadiusInPixels = 10,
-					inactiveCenterPoint = Vector2.new(0, 0),
-					initializedEnabled = true,
-					initializedVisible = true,
-					relativeThumbRadius = 0.5,
-					renderer = a.fake()
-				},
-				--[[ currentCameraGetter ]] currentCameraGetter,
-				--[[ guiService ]] guiService,
-				--[[ joystickInputCalculator ]] joystickInputCalculator,
-				--[[ joysticksManager ]] a.fake()
-			)
+				local joystick = Joystick.new(
+					{
+						activationRegion = a.fake(),
+						gutterRadiusInPixels = 10,
+						inactiveCenterPoint = Vector2.new(0, 0),
+						initializedEnabled = true,
+						initializedVisible = true,
+						relativeThumbRadius = 0.5,
+						renderer = a.fake()
+					},
+					--[[ currentCameraGetter ]] currentCameraGetter,
+					--[[ guiService ]] guiService,
+					--[[ joystickInputCalculator ]] joystickInputCalculator,
+					--[[ joysticksManager ]] a.fake()
+				)
 
-			joystick:activate(initialInputPoint)
+				joystick:activate(initialInputPoint)
 
-			local wasInputChangedFired = false
-			local reportedUpdatedInput = nil
-			joystick.inputChanged:Connect(function(newInput)
-				wasInputChangedFired = true
-				reportedUpdatedInput = newInput
-			end)
+				local wasInputChangedFired = false
+				local reportedUpdatedInput = nil
+				joystick.inputChanged:Connect(function(newInput)
+					wasInputChangedFired = true
+					reportedUpdatedInput = newInput
+				end)
 
-			wait()
+				wait()
 
-			joystick:updateInput(updatedInputPoint)
+				joystick:updateInput(updatedInputPoint)
 
-			expect(joystick.input).to.be.ok()
-			expect(joystick.input.X).to.be.near(expectedUpdatedInput.X, 1 / 128)
-			expect(joystick.input.Y).to.be.near(expectedUpdatedInput.Y, 1 / 128)
-			expect(wasInputChangedFired).to.equal(true)
-			expect(reportedUpdatedInput).to.be.ok()
-			expect(reportedUpdatedInput.X).to.be.near(expectedUpdatedInput.X, 1 / 128)
-			expect(reportedUpdatedInput.Y).to.be.near(expectedUpdatedInput.Y, 1 / 128)
+				expect(joystick.input).to.be.ok()
+				expect(joystick.input.X).to.be.near(expectedUpdatedInput.X, 1 / 128)
+				expect(joystick.input.Y).to.be.near(expectedUpdatedInput.Y, 1 / 128)
+				expect(wasInputChangedFired).to.equal(true)
+				expect(reportedUpdatedInput).to.be.ok()
+				expect(reportedUpdatedInput.X).to.be.near(expectedUpdatedInput.X, 1 / 128)
+				expect(reportedUpdatedInput.Y).to.be.near(expectedUpdatedInput.Y, 1 / 128)
+			end
 		end)
 
 		it("should throw when attempting to change the input of an inactive joystick", function()
