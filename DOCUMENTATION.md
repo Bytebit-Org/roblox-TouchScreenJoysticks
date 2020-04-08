@@ -194,6 +194,9 @@ Fired when the instance's visibility has changed
 A `boolean` indicating whether the instance is now visible
 
 #### Instance methods
+`destroy(): void`\
+Destroys the instance
+
 `setActivationRegion(newRegion: IGuiWindowRegion): void`\
 Sets the activation region of the instance
 ##### Parameters
@@ -279,14 +282,6 @@ Creates a new [`IJoystick`](#IJoystick) based on the given [`IJoystickConfigurat
 The configuration for the new Joystick
 ##### Returns
 The new [`IJoystick`](#IJoystick) instance
-
-`destroyJoystick(joystick: IJoystick): void`\
-Destroys the given [`IJoystick`](#IJoystick) instance
-##### Parameters
-- joystick\
-The [`IJoystick`](#IJoystick) instance to destroy
-##### Throws
-Throws when the given [`IJoystick`](#IJoystick) instance is not a member of this [`IJoysticksManager`](#IJoysticksManager)
 
 ### JoysticksManager
 The actual implementation of [`IJoysticksManager`](#IJoysticksManager)
