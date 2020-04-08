@@ -4,8 +4,8 @@
   "description": "",
   "main": "out/init.lua",
   "scripts": {
-	"prepublishOnly": "rbxtsc",
-	"test": "rbxtsc && rojo build -o tests/build.rbxlx tests && run-in-roblox tests/build.rbxlx -s tests/spec.lua"
+    "prepublishOnly": "rbxtsc",
+    "test": "rbxtsc && rojo build -o tests/build.rbxlx tests && run-in-roblox tests/build.rbxlx -s tests/spec.lua"
   },
   "repository": {
     "type": "git",
