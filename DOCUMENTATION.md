@@ -153,7 +153,7 @@ When active, the joystick is actively being interacted with by the player
 
 `readonly isEnabled: boolean`\
 A readonly field for determining whether the instance is enabled\
-When enabled and visible, the joystick can be interacted with by the player
+When enabled, the joystick can be interacted with by the player
 
 `readonly isVisible: boolean`\
 A readonly field for determining whether the instance is visible\
