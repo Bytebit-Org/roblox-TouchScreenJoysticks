@@ -1,5 +1,4 @@
 return function()
-	FOCUS()
     local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 	local fitumi = require(ReplicatedStorage:WaitForChild("fitumi"))
