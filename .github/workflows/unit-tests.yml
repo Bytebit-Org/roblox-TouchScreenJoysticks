@@ -7,6 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+      - name: install npm packages
+        uses: bahmutov/npm-install@v1
       - name: run eslint
         run: npm run eslint
       - name: install selene
