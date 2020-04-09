@@ -1,0 +1,37 @@
+name: CI
+
+on: [push]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: install selene
+        run: cargo install selene
+      - name: run selene
+        run: selene ./src/ ./tests/src/
+  unit-tests:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          submodules: recursive
+      - run: Invoke-WebRequest -Uri "https://github.com/OrbitalOwen/run-in-roblox/releases/download/0.2.0/run-in-roblox.exe" -OutFile run-in-roblox.exe
+      - run: Invoke-WebRequest -Uri "https://raw.githubusercontent.com/OrbitalOwen/roblox-win-installer/master/install.py" -OutFile install.py
+      - run: Invoke-WebRequest -Uri "https://raw.githubusercontent.com/OrbitalOwen/roblox-win-installer/master/GlobalSettings_13.xml" -OutFile GlobalSettings_13.xml
+      - run: pip install wget psutil
+      - run: python install.py "${{ secrets.ROBLOSECURITY }}"
+      - name: install roblox-ts
+        run: npm i roblox-ts
+      - name: compile typescript code
+        run: rbxtsc
+      - name: install foreman
+        uses: rojo-rbx/setup-foreman@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: install foreman packages (rojo)
+        run: foreman install
+      - name: run rojo build
+        run: rojo build -o .\\tests\\build.rbxlx .\\tests\\
+      - run: .\\run-in-roblox.exe -s .\\tests\\spec.lua -t 1800 .\\tests\\build.rbxlx
