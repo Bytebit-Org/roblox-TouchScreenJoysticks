@@ -4,6 +4,9 @@
   "description": "",
   "main": "out/init.lua",
   "scripts": {
+	"eslint-src": "npx eslint \"src/**/*.ts\" --max-warnings 0",
+	"eslint-tests": "npx eslint \"tests/**/*.ts\" --max-warnings 0",
+	"eslint": "npm run eslint-src && npm run eslint-tests",
     "prepublishOnly": "rbxtsc",
     "test": "rbxtsc && rojo build -o tests/build.rbxlx tests && run-in-roblox tests/build.rbxlx -s tests/spec.lua"
   },
