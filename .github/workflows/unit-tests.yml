@@ -45,4 +45,4 @@ jobs:
         run: foreman install
       - name: run rojo build
         run: rojo build -o .\\tests\\build.rbxlx .\\tests\\
-      - run: .\\run-in-roblox.exe .\\tests\\build.rbxlx -s .\\tests\\spec.lua -t 1800
+      - run: .\\run-in-roblox.exe --place .\\tests\\build.rbxlx --script .\\tests\\spec.lua
