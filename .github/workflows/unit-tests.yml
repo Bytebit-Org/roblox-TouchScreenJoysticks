@@ -22,7 +22,7 @@ jobs:
         with:
           submodules: recursive
       - name: download run-in-roblox
-        run: Invoke-WebRequest -Uri "${{ RUNINROBLOXDOWNLOAD }}" -OutFile run-in-roblox.exe
+        run: Invoke-WebRequest -Uri "${{ secrets.RUNINROBLOXDOWNLOAD }}" -OutFile run-in-roblox.exe
       - run: Invoke-WebRequest -Uri "https://raw.githubusercontent.com/OrbitalOwen/roblox-win-installer/master/install.py" -OutFile install.py
       - run: Invoke-WebRequest -Uri "https://raw.githubusercontent.com/OrbitalOwen/roblox-win-installer/master/GlobalSettings_13.xml" -OutFile GlobalSettings_13.xml
       - run: pip install wget psutil
