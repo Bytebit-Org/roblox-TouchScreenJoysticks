@@ -29,8 +29,10 @@ jobs:
       - run: python install.py "${{ secrets.ROBLOSECURITY }}"
       - name: install roblox-ts
         run: npm i roblox-ts
-      - name: compile typescript code
+      - name: compile main typescript code
         run: npx roblox-ts
+      - name: compile test typescript code
+        run: npx roblox-ts .\\tests\\
       - name: install foreman
         uses: rojo-rbx/setup-foreman@v1
         with:
