@@ -12,7 +12,7 @@ jobs:
       - name: run eslint
         run: npm run eslint
       - name: install selene
-        run: cargo install selene
+        run: curl -o selene https://github.com/Kampfkarren/selene/releases/download/0.5.3/selene-linux
       - name: run selene
         run: selene ./tests/src/
   unit-tests:
@@ -44,7 +44,6 @@ jobs:
         run: foreman install
       - name: run rojo build
         run: rojo build -o .\\tests\\build.rbxlx .\\tests\\
-      - run: Start-Job -FilePath .\\take_screenshots.ps1
       - run: |
           Start-Job -FilePath .\\take_screenshots.ps1
           .\\run-in-roblox.exe --place .\\tests\\build.rbxlx --script .\\tests\\spec.lua
