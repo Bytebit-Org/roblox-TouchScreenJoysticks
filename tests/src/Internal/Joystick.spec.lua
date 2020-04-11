@@ -11,6 +11,8 @@ return function()
 		it("should be constructable and fulfill its interface", function()
 			local joystick;
 
+			error("just fail");
+
 			expect(function()
 				joystick = Joystick.new(
 					{
