@@ -51,8 +51,11 @@ jobs:
       - run: .\\run-in-roblox.exe --place .\\tests\\build.rbxlx --script .\\tests\\spec.lua
       - run: Compress-Archive -Path .\\screenshots\\ -DestinationPath .\\screenshots-archive
       - run: ls
+        if: always()
       - run: ls .\\screenshots\\
+        if: always()
       - uses: actions/upload-artifact@v1
         with:
           name: screenshots.zip
           path: .\\screenshots.zip
+        if: always()
