@@ -1,6 +1,7 @@
+New-Item -Path .\\screenshots -Type Directory
 
-    Start-Sleep -s 15
-
+while($true)
+{
     $i++
     Write-Debug $i
     $outputFile = ".\\screenshots\$i.png"
@@ -20,3 +21,6 @@
     $graphicObject.CopyFromScreen($Left, $Top, 0, 0, $screenshotImage.Size)
 
     $screenshotImage.Save($outputFile)
+
+    Start-Sleep -s 5
+}
