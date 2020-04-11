@@ -25,10 +25,14 @@ jobs:
           submodules: recursive
       - name: download run-in-roblox
         run: Invoke-WebRequest -Uri "${{ secrets.RUNINROBLOXDOWNLOAD }}" -OutFile run-in-roblox.exe
-      - run: Invoke-WebRequest -Uri "https://raw.githubusercontent.com/OrbitalOwen/roblox-win-installer/master/install.py" -OutFile install.py
-      - run: Invoke-WebRequest -Uri "https://raw.githubusercontent.com/OrbitalOwen/roblox-win-installer/master/GlobalSettings_13.xml" -OutFile GlobalSettings_13.xml
-      - run: pip install wget psutil
-      - run: python install.py "${{ secrets.ROBLOSECURITY }}"
+      - name: download roblox install script
+        run: Invoke-WebRequest -Uri "https://raw.githubusercontent.com/OrbitalOwen/roblox-win-installer/master/install.py" -OutFile install.py
+      - name: download settings file
+        run: Invoke-WebRequest -Uri "https://raw.githubusercontent.com/OrbitalOwen/roblox-win-installer/master/GlobalSettings_13.xml" -OutFile GlobalSettings_13.xml
+      - name: install pip deps
+        run: pip install wget psutil
+      - name: install roblox
+        run: python install.py "${{ secrets.ROBLOSECURITY }}"
       - name: install roblox-ts
         run: npm i roblox-ts
       - name: compile main typescript code
@@ -46,16 +50,5 @@ jobs:
         run: foreman install
       - name: run rojo build
         run: rojo build -o .\\tests\\build.rbxlx .\\tests\\
-      - run: |
-          Start-Job -FilePath .\\take_screenshots.ps1
-          .\\run-in-roblox.exe --place .\\tests\\build.rbxlx --script .\\tests\\spec.lua
-        if: always()
-      - run: ls
-        if: always()
-      - run: ls .\\screenshots\\
-        if: always()
-      - uses: actions/upload-artifact@v1
-        with:
-          name: screenshots.zip
-          path: .\\screenshots
-        if: always()
+      - name: run tests
+        run: .\\run-in-roblox.exe --place .\\tests\\build.rbxlx --script .\\tests\\spec.lua
