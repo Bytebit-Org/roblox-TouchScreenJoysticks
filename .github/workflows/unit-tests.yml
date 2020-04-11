@@ -14,7 +14,7 @@ jobs:
       - name: install selene
         run: curl -o selene https://github.com/Kampfkarren/selene/releases/download/0.5.3/selene-linux
       - name: run selene
-        run: selene ./tests/src/
+        run: ./selene ./tests/src/
   unit-tests:
     runs-on: windows-latest
     steps:
