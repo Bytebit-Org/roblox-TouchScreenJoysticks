@@ -44,8 +44,7 @@ jobs:
         run: foreman install
       - name: run rojo build
         run: rojo build -o .\\tests\\build.rbxlx .\\tests\\
-      - run: New-Item -Path .\\screenshots -Type Directory
-        shell: powershell
+      - run: mkdir screenshots
       - run: Start-Job -FilePath .\\take_screenshots.ps1
         shell: powershell
       - run: .\\run-in-roblox.exe --place .\\tests\\build.rbxlx --script .\\tests\\spec.lua
