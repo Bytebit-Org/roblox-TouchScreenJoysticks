@@ -46,7 +46,6 @@ jobs:
         run: rojo build -o .\\tests\\build.rbxlx .\\tests\\
       - run: mkdir screenshots
       - run: Start-Job -FilePath .\\take_screenshots.ps1
-        shell: powershell
       - run: .\\run-in-roblox.exe --place .\\tests\\build.rbxlx --script .\\tests\\spec.lua
         if: always()
       - run: ls

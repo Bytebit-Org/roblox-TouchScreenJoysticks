@@ -1,6 +1,8 @@
-while($true)
-{
+
+    Start-Sleep -s 15
+
     $i++
+    Write-Debug $i
     $outputFile = ".\\screenshots\$i.png"
 
     Add-Type -AssemblyName System.Windows.Forms
@@ -18,6 +20,3 @@ while($true)
     $graphicObject.CopyFromScreen($Left, $Top, 0, 0, $screenshotImage.Size)
 
     $screenshotImage.Save($outputFile)
-
-    Start-Sleep -s 5
-}
