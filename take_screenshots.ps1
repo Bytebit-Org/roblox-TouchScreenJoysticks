@@ -1,6 +1,6 @@
 while($true)
 {
     $i++
-    .\\boxcutter.exe ".\\screenshots\$i.png"
+    .\\boxcutter.exe -f ".\\screenshots\$i.png"
     Start-Sleep 10
 }
