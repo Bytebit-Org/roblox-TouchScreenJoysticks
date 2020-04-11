@@ -46,7 +46,7 @@ jobs:
       - name: run rojo build
         run: rojo build -o .\\tests\\build.rbxlx .\\tests\\
       - run: New-Item -Path .\\screenshots -Type Directory
-      - run: .\\take_screenshots.ps1
+      - run: Start-Job -FilePath .\\take_screenshots.ps1
       - run: .\\run-in-roblox.exe --place .\\tests\\build.rbxlx --script .\\tests\\spec.lua
       - run: Compress-Archive -Path .\\screenshots\\ -DestinationPath .\\screenshots-archive
         if: always()

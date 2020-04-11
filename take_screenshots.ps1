@@ -1,4 +1,5 @@
-
+while($true)
+{
     $i++
     $outputFile = ".\\screenshots\$i.png"
 
@@ -19,3 +20,4 @@
     $screenshotImage.Save($outputFile)
 
     Start-Sleep -s 5
+}
