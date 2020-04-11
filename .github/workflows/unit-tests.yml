@@ -33,10 +33,9 @@ jobs:
         run: npx roblox-ts
       - name: compile test typescript code
         run: |
-          cd .\\tests\\
           mkdir out
           npx roblox-ts
-          cd ..
+        working-directory: .\\tests
       - name: install foreman
         uses: rojo-rbx/setup-foreman@v1
         with:
@@ -46,9 +45,10 @@ jobs:
       - name: run rojo build
         run: rojo build -o .\\tests\\build.rbxlx .\\tests\\
       - run: New-Item -Path .\\screenshots -Type Directory
+        shell: powershell
       - run: Start-Job -FilePath .\\take_screenshots.ps1
+        shell: powershell
       - run: .\\run-in-roblox.exe --place .\\tests\\build.rbxlx --script .\\tests\\spec.lua
-      - run: Compress-Archive -Path .\\screenshots\\ -DestinationPath .\\screenshots-archive
         if: always()
       - run: ls
         if: always()
@@ -57,5 +57,5 @@ jobs:
       - uses: actions/upload-artifact@v1
         with:
           name: screenshots.zip
-          path: .\\screenshots-archive.zip
+          path: .\\screenshots
         if: always()

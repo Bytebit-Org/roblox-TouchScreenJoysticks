@@ -4,7 +4,7 @@ while($true)
     $outputFile = ".\\screenshots\$i.png"
 
     Add-Type -AssemblyName System.Windows.Forms
-    Add-type -AssemblyName System.Drawing
+    Add-Type -AssemblyName System.Drawing
 
     $Screen = [System.Windows.Forms.SystemInformation]::VirtualScreen
     $Width = $Screen.Width
