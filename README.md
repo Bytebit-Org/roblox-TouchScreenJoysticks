@@ -1,4 +1,19 @@
-# Overview
+# Touch Screen Joysticks
+<p align="center">
+	<a href="https://github.com/Bytebit-Org/roblox-TouchScreenJoysticks/actions">
+        <img src="https://github.com/Bytebit-Org/roblox-TouchScreenJoysticks/workflows/CI/badge.svg" alt="CI status" />
+    </a>
+	<a href="http://makeapullrequest.com">
+		<img src="https://img.shields.io/badge/PRs-welcome-blue.svg" alt="PRs Welcome" />
+	</a>
+	<a href="https://opensource.org/licenses/MIT">
+		<img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT" />
+	</a>
+	<a href="https://discord.gg/QEz3v8y">
+		<img src="https://img.shields.io/badge/discord-join-7289DA.svg?logo=discord&longCache=true&style=flat" alt="Discord server" />
+	</a>
+</p>
+
 This project is an open-source tool for composing multiple, customized touch screen joysticks with the objective of improving the tooling available to Roblox developers for mobile games.
 
 # Links
