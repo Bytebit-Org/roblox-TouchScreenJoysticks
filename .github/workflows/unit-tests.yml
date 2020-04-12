@@ -1,0 +1,54 @@
+name: CI
+
+on: [push]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: install npm packages
+        uses: bahmutov/npm-install@v1
+      - name: run eslint
+        run: npm run eslint
+      - name: install selene
+        run: |
+          curl -L -o selene https://github.com/Kampfkarren/selene/releases/latest/download/selene-linux
+          chmod +x ./selene
+      - name: run selene
+        run: ./selene ./tests/src/
+  unit-tests:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          submodules: recursive
+      - name: download run-in-roblox
+        run: Invoke-WebRequest -Uri "${{ secrets.RUNINROBLOXDOWNLOAD }}" -OutFile run-in-roblox.exe
+      - name: download roblox install script
+        run: Invoke-WebRequest -Uri "https://raw.githubusercontent.com/OrbitalOwen/roblox-win-installer/master/install.py" -OutFile install.py
+      - name: download settings file
+        run: Invoke-WebRequest -Uri "https://raw.githubusercontent.com/OrbitalOwen/roblox-win-installer/master/GlobalSettings_13.xml" -OutFile GlobalSettings_13.xml
+      - name: install pip deps
+        run: pip install wget psutil
+      - name: install roblox
+        run: python install.py "${{ secrets.ROBLOSECURITY }}"
+      - name: install roblox-ts
+        run: npm i roblox-ts
+      - name: compile main typescript code
+        run: npx roblox-ts
+      - name: compile test typescript code
+        run: |
+          mkdir out
+          npx roblox-ts
+        working-directory: .\\tests
+      - name: install foreman
+        uses: rojo-rbx/setup-foreman@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: install foreman packages (rojo)
+        run: foreman install
+      - name: run rojo build
+        run: rojo build -o .\\tests\\build.rbxlx .\\tests\\
+      - name: run tests
+        run: .\\run-in-roblox.exe --place .\\tests\\build.rbxlx --script .\\tests\\spec.lua
