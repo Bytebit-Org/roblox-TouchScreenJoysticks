@@ -24,7 +24,8 @@
   },
   "types": "out/index.d.ts",
   "devDependencies": {
-    "@rbxts/types": "^1.0.343",
+    "@rbxts/compiler-types": "^1.1.1-types.5",
+    "@rbxts/types": "^1.0.503",
     "@typescript-eslint/eslint-plugin": "^2.17.0",
     "@typescript-eslint/parser": "^2.17.0",
     "eslint": "^6.8.0",
@@ -35,7 +36,7 @@
   },
   "dependencies": {
     "@rbxts/dumpster": "^1.0.8",
-    "@rbxts/services": "^1.0.4",
-    "@rbxts/signals-tooling": "^1.0.2"
+    "@rbxts/services": "^1.1.5",
+    "@rbxts/signals-tooling": "^1.0.4"
   }
 }

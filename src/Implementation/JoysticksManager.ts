@@ -94,7 +94,7 @@ export class JoysticksManager implements IJoysticksManager {
 	public destroy() {
 		this.isDestroyed = true;
 
-		for (const key of Object.keys(this.activeJoysticksByTouchInputObject)) {
+		for (const [key] of this.activeJoysticksByTouchInputObject) {
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			const activeJoystick = this.activeJoysticksByTouchInputObject.get(key)!;
 			activeJoystick.deactivate();
