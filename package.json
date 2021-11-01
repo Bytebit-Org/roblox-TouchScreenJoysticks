@@ -1,7 +1,7 @@
 {
   "name": "@rbxts/touch-screen-joysticks",
-  "version": "1.0.1",
-  "description": "",
+  "version": "1.0.2",
+  "description": "A library for creating touch-screen joystick interfaces for Roblox development written using roblox-ts.",
   "main": "out/init.lua",
   "scripts": {
     "eslint": "npx eslint \"src/**/*.ts\" --max-warnings 0",
