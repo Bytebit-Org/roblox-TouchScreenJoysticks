@@ -4,5 +4,5 @@ registry = "test"
 
 [[package]]
 name = "bytebit/touch-screen-joysticks"
-version = "1.0.3"
+version = "1.0.4"
 dependencies = []
