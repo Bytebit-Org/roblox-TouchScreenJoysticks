@@ -23,8 +23,6 @@ jobs:
       - uses: actions/checkout@v1
         with:
           submodules: recursive
-      - name: download run-in-roblox
-        run: Invoke-WebRequest -Uri "${{ secrets.RUNINROBLOXDOWNLOAD }}" -OutFile run-in-roblox.exe
       - name: download roblox install script
         run: Invoke-WebRequest -Uri "https://raw.githubusercontent.com/OrbitalOwen/roblox-win-installer/master/install.py" -OutFile install.py
       - name: download settings file
@@ -51,4 +49,4 @@ jobs:
       - name: run rojo build
         run: rojo build -o .\\tests\\build.rbxlx .\\tests\\
       - name: run tests
-        run: .\\run-in-roblox.exe --place .\\tests\\build.rbxlx --script .\\tests\\spec.lua
+        run: run-in-roblox --place .\\tests\\build.rbxlx --script .\\tests\\spec.lua
