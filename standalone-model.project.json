@@ -1,5 +1,5 @@
 {
-    "name": "server-networked-values",
+    "name": "touch-screen-joysticks",
     "globIgnorePaths": [
         "**/package.json",
         "**/tsconfig.json"
