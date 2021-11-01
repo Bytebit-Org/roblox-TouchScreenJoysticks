@@ -34,7 +34,7 @@ jobs:
       - name: install foreman packages (rojo, run-in-roblox)
         run: foreman install
       - name: run rojo build
-        run: rojo build -o ./server-networked-values-${{ steps.package-version.outputs.current-version }}.rbxmx ./standalone-model.project.json
+        run: rojo build -o ./touch-screen-joysticks-${{ steps.package-version.outputs.current-version }}.rbxmx ./standalone-model.project.json
       - name: create-release
         uses: actions/create-release@latest
         id: create_release
@@ -52,25 +52,25 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./server-networked-values-${{ steps.package-version.outputs.current-version }}.rbxmx
-          asset_name: server-networked-values-${{ steps.package-version.outputs.current-version }}.rbxmx
+          asset_path: ./touch-screen-joysticks-${{ steps.package-version.outputs.current-version }}.rbxmx
+          asset_name: touch-screen-joysticks-${{ steps.package-version.outputs.current-version }}.rbxmx
           asset_content_type: form
       - name: upload rbxmx file to Roblox
         run: |
           cd ./scripts
-          python upload_model.py -a ${{ secrets.ASSET_ID }} -f ../server-networked-values-${{ steps.package-version.outputs.current-version }}.rbxmx -r "${{ secrets.UPLOADER_BOT_ROBLOSECURITY }}"
+          python upload_model.py -a ${{ secrets.ASSET_ID }} -f ../touch-screen-joysticks-${{ steps.package-version.outputs.current-version }}.rbxmx -r "${{ secrets.UPLOADER_BOT_ROBLOSECURITY }}"
           cd ..
       - name: prepare wally package contents
         run: |
-          mkdir -p ~/temp/server-networked-values
-          cp -r ./{include,out} ~/temp/server-networked-values/
-          cp ./{CHANGELOG.md,LICENSE,README.md,wally.lock,wally.toml} ~/temp/server-networked-values/
-          cp ./standalone-model.project.json ~/temp/server-networked-values/default.project.json
-          mkdir ~/temp/server-networked-values/node_modules
-          cp -r ./node_modules/@rbxts ~/temp/server-networked-values/node_modules/
+          mkdir -p ~/temp/touch-screen-joysticks
+          cp -r ./{include,out} ~/temp/touch-screen-joysticks/
+          cp ./{CHANGELOG.md,LICENSE,README.md,wally.lock,wally.toml} ~/temp/touch-screen-joysticks/
+          cp ./standalone-model.project.json ~/temp/touch-screen-joysticks/default.project.json
+          mkdir ~/temp/touch-screen-joysticks/node_modules
+          cp -r ./node_modules/@rbxts ~/temp/touch-screen-joysticks/node_modules/
       - name: prepare wally auth
         run: |
           mkdir ~/.wally
           echo -e '${{ secrets.WALLY_AUTH }}' > ~/.wally/auth.toml
       - name: publish wally package
-        run: wally publish --project-path ~/temp/server-networked-values/
+        run: wally publish --project-path ~/temp/touch-screen-joysticks/
