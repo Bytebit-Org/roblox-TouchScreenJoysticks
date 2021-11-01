@@ -5,7 +5,7 @@
   "main": "out/init.lua",
   "scripts": {
     "eslint": "npx eslint \"src/**/*.ts\" --max-warnings 0",
-    "prepublishOnly": "rbxtsc",
+    "prepublishOnly": "rbxtsc --type=package",
     "test": "rbxtsc && rojo build -o tests/build.rbxlx tests && run-in-roblox tests/build.rbxlx -s tests/spec.lua"
   },
   "repository": {
@@ -14,7 +14,7 @@
   },
   "keywords": [],
   "author": "Bytebit",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Bytebit-Org/roblox-TouchScreenJoysticks/issues"
   },
