@@ -26,7 +26,7 @@ npm i @rbxts/touch-screen-joysticks
 ### Wally
 [Wally](https://github.com/UpliftGames/wally/) users can install this package by adding the following line to their `Wally.toml` under `[dependencies]`:
 ```
-TouchScreenJoysticks = "bytebit/touch-screen-joysticks@1.0.7"
+TouchScreenJoysticks = "bytebit/touch-screen-joysticks@1.0.8"
 ```
 
 Then just run `wally install`.

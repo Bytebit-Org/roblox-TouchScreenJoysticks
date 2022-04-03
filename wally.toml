@@ -1,7 +1,7 @@
 [package]
 name = "bytebit/touch-screen-joysticks"
 description = "A library for creating touch-screen joystick interfaces for Roblox development written using roblox-ts."
-version = "1.0.7"
+version = "1.0.8"
 license = "MIT"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
