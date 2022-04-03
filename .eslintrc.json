@@ -29,6 +29,7 @@
 				"tabWidth": 4,
 				"useTabs": true
 			}
-		]
+		],
+		"@typescript-eslint/explicit-function-return-type": "off"
 	}
 }
