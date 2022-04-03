@@ -1,10 +1,8 @@
 import { ICompositeJoystickRendererComponent } from "../../../../Interfaces/ICompositeJoystickRendererComponent";
 
-const IMAGE_ASSET = "rbxassetid://4798571099";
-
 /** An implementation of `IJoystickRenderer` that renders a solid color, filled circle */
 export class SolidFilledCircle implements ICompositeJoystickRendererComponent {
-	private readonly imageLabel: ImageLabel;
+	private readonly frame: Frame;
 
 	private isDestroyed = false;
 
@@ -14,18 +12,21 @@ export class SolidFilledCircle implements ICompositeJoystickRendererComponent {
 	 * @param transparency An optional `number` in the range [0, 1] that describes the transparency of the filled circle. Defaults to 0.
 	 */
 	public constructor(color: Color3, transparency?: number) {
-		const imageLabel = new Instance("ImageLabel");
-		imageLabel.AnchorPoint = new Vector2(0.5, 0.5);
-		imageLabel.BackgroundTransparency = 1;
-		imageLabel.Image = IMAGE_ASSET;
-		imageLabel.ImageColor3 = color;
-		imageLabel.ImageTransparency = transparency !== undefined ? transparency : 0;
+		const frame = new Instance("Frame");
+		frame.AnchorPoint = new Vector2(0.5, 0.5);
+		frame.BackgroundTransparency = transparency !== undefined ? transparency : 0;
+		frame.BackgroundColor3 = color;
+		frame.BorderSizePixel = 0;
 
-		this.imageLabel = imageLabel;
+		const uiCorner = new Instance("UICorner");
+		uiCorner.CornerRadius = new UDim(0.5, 0);
+		uiCorner.Parent = frame;
+
+		this.frame = frame;
 	}
 
 	public destroy() {
-		this.imageLabel.Destroy();
+		this.frame.Destroy();
 		this.isDestroyed = true;
 	}
 
@@ -34,7 +35,7 @@ export class SolidFilledCircle implements ICompositeJoystickRendererComponent {
 			throw `Instance is destroyed`;
 		}
 
-		return this.imageLabel;
+		return this.frame;
 	}
 
 	public hide() {
@@ -42,7 +43,7 @@ export class SolidFilledCircle implements ICompositeJoystickRendererComponent {
 			throw `Instance is destroyed`;
 		}
 
-		this.imageLabel.Parent = undefined;
+		this.frame.Parent = undefined;
 	}
 
 	public render(position: UDim2, size: UDim2, zIndex: number, parent: Instance) {
@@ -50,12 +51,12 @@ export class SolidFilledCircle implements ICompositeJoystickRendererComponent {
 			throw `Instance is destroyed`;
 		}
 
-		this.imageLabel.Parent = undefined;
+		this.frame.Parent = undefined;
 
-		this.imageLabel.Position = position;
-		this.imageLabel.Size = size;
-		this.imageLabel.ZIndex = zIndex;
+		this.frame.Position = position;
+		this.frame.Size = size;
+		this.frame.ZIndex = zIndex;
 
-		this.imageLabel.Parent = parent;
+		this.frame.Parent = parent;
 	}
 }
