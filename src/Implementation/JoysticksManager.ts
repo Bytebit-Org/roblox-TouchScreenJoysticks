@@ -4,7 +4,6 @@ import { IJoysticksManager } from "../Interfaces/IJoysticksManager";
 import { IJoystickConfiguration } from "../Interfaces/IJoystickConfiguration";
 import { IJoystick } from "../Interfaces/IJoystick";
 import { Dumpster } from "@rbxts/dumpster";
-import { IJoystickInputCalculator } from "../Interfaces/IJoystickInputCalculator";
 import { JoystickInputCalculator } from "../Internal/JoystickInputCalculator";
 
 export class JoysticksManager implements IJoysticksManager {
