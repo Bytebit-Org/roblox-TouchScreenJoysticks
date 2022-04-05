@@ -34,6 +34,7 @@ export class Joystick implements IJoystick {
 	private relativeThumbRadius: number;
 	private renderer: IJoystickRenderer;
 	private signalsDumpster: Dumpster;
+	private shouldMoveCenterPointWhenActivated: boolean;
 
 	// Dependencies
 	private readonly currentCameraGetter: () => Camera | undefined;
@@ -70,6 +71,7 @@ export class Joystick implements IJoystick {
 		this.inactiveCenterPoint = configuration.inactiveCenterPoint;
 		this.relativeThumbRadius = configuration.relativeThumbRadius;
 		this.renderer = configuration.renderer;
+		this.shouldMoveCenterPointWhenActivated = configuration.shouldMoveCenterPointWhenActivated ?? true;
 
 		// Initialize other private members
 		this.signalsDumpster = new Dumpster();
@@ -217,21 +219,23 @@ export class Joystick implements IJoystick {
 
 		const guiWindowSize = this.getGuiWindowSize();
 
-		let newGutterCenter = inputPoint;
+		if (this.shouldMoveCenterPointWhenActivated) {
+			let newGutterCenter = inputPoint;
 
-		if (inputPoint.X - this.gutterRadiusInPixels < 0) {
-			newGutterCenter = new Vector2(this.gutterRadiusInPixels, newGutterCenter.Y);
-		} else if (inputPoint.X + this.gutterRadiusInPixels > guiWindowSize.X) {
-			newGutterCenter = new Vector2(guiWindowSize.X - this.gutterRadiusInPixels, newGutterCenter.Y);
+			if (inputPoint.X - this.gutterRadiusInPixels < 0) {
+				newGutterCenter = new Vector2(this.gutterRadiusInPixels, newGutterCenter.Y);
+			} else if (inputPoint.X + this.gutterRadiusInPixels > guiWindowSize.X) {
+				newGutterCenter = new Vector2(guiWindowSize.X - this.gutterRadiusInPixels, newGutterCenter.Y);
+			}
+
+			if (inputPoint.Y - this.gutterRadiusInPixels < 0) {
+				newGutterCenter = new Vector2(newGutterCenter.X, this.gutterRadiusInPixels);
+			} else if (inputPoint.Y + this.gutterRadiusInPixels > guiWindowSize.Y) {
+				newGutterCenter = new Vector2(newGutterCenter.X, guiWindowSize.Y - this.gutterRadiusInPixels);
+			}
+
+			this.gutterCenterPoint = newGutterCenter;
 		}
-
-		if (inputPoint.Y - this.gutterRadiusInPixels < 0) {
-			newGutterCenter = new Vector2(newGutterCenter.X, this.gutterRadiusInPixels);
-		} else if (inputPoint.Y + this.gutterRadiusInPixels > guiWindowSize.Y) {
-			newGutterCenter = new Vector2(newGutterCenter.X, guiWindowSize.Y - this.gutterRadiusInPixels);
-		}
-
-		this.gutterCenterPoint = newGutterCenter;
 
 		const initialInput = this.joystickInputCalculator.calculate(
 			this.gutterCenterPoint,

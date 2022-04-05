@@ -26,6 +26,8 @@ export interface IJoystickConfiguration {
 
 	/**
 	 * Defines the priority leve lof the `IJoystick` instance.
+	 * Higher priorities take precedence when initial touches could activate more than one joystick.
+	 * Equal priorities are decided at random.
 	 * Defaults to 1.
 	 */
 	priorityLevel?: number;
@@ -35,4 +37,10 @@ export interface IJoystickConfiguration {
 
 	/** Defines the thumb radius as a number in the range [0, 1] relative to the gutter radius */
 	relativeThumbRadius: number;
+
+	/**
+	 * Defines whether the joystick should recenter to the initial input point when activated.
+	 * Defaults to true.
+	 */
+	shouldMoveCenterPointWhenActivated?: boolean;
 }
